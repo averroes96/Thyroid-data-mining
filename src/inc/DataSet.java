@@ -1,79 +1,167 @@
 package inc;
 
-import java.util.ArrayList;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
-public class DataSet {
+// This class is the general concept of our entire dataset
 
-    private IntegerAttribute attributeClass;
-    private IntegerAttribute t3ResinUptakeTest;
-    private DoubleAttribute serumThyroxin;
-    private DoubleAttribute serumTriiodothyronine;
-    private DoubleAttribute tsh;
-    private DoubleAttribute newTsh;
+public class DataSet implements Init {
+
+    // rows is the list that contains the dataset's entire rows
+    private ObservableList<Row> rows = FXCollections.observableArrayList();
+
+    // Constructors
 
     public DataSet() {
-        attributeClass = new IntegerAttribute();
-        t3ResinUptakeTest = new IntegerAttribute();
-        serumThyroxin = new DoubleAttribute();
-        serumTriiodothyronine = new DoubleAttribute();
-        tsh = new DoubleAttribute();
-        newTsh = new DoubleAttribute();
     }
 
-    public DataSet(IntegerAttribute attributeClass, IntegerAttribute t3ResinUptakeTest, DoubleAttribute serumThyroxin, DoubleAttribute serumTriiodothyronine, DoubleAttribute tsh, DoubleAttribute newTsh) {
-        this.attributeClass = attributeClass;
-        this.t3ResinUptakeTest = t3ResinUptakeTest;
-        this.serumThyroxin = serumThyroxin;
-        this.serumTriiodothyronine = serumTriiodothyronine;
-        this.tsh = tsh;
-        this.newTsh = newTsh;
+    public DataSet(ObservableList<Row> rows) {
+        this.rows = rows;
     }
 
-    public IntegerAttribute getAttributeClass() {
-        return attributeClass;
+    // Getters and Setters
+
+    public ObservableList<Row> getRows() {
+        return rows;
     }
 
-    public void setAttributeClass(IntegerAttribute attributeClass) {
-        this.attributeClass = attributeClass;
+    public void setRows(ObservableList<Row> rows) {
+        this.rows = rows;
     }
 
-    public IntegerAttribute getT3ResinUptakeTest() {
-        return t3ResinUptakeTest;
+    // Method to calculate the mean of an attribute by a given position "attrPosition"
+    public double calculateMean(int attrPosition){
+
+        double mean = 0;
+
+        mean = getAttributeSum(attrPosition) / rows.size();
+
+        return mean;
     }
 
-    public void setT3ResinUptakeTest(IntegerAttribute t3ResinUptakeTest) {
-        this.t3ResinUptakeTest = t3ResinUptakeTest;
+    // Method to calculate the median of an attribute by a given position "attrPosition"
+    public double calculateMedian(int attrPosition){
+
+        double median = 0;
+
+        median = getAttributeMedian(attrPosition, rows.size() % 2 == 0 ? PAIR : ODD);
+
+        return median;
+
     }
 
-    public DoubleAttribute getSerumThyroxin() {
-        return serumThyroxin;
+    // Method to calculate the mode of an attribute by a given position "attrPosition"
+    public double calculateMode(int attrPosition){
+
+        double maxValue=0, maxCount=0;
+
+        for(Row val1 : rows){
+            int count = 0;
+            for(Row val2 : rows){
+                if(val1.getValueByPosition(attrPosition) == val2.getValueByPosition(attrPosition)){
+                    count++;
+                }
+            }
+            if(count > maxCount){
+                maxCount = count;
+                maxValue = val1.getValueByPosition(attrPosition);
+            }
+        }
+
+        return maxValue;
+
     }
 
-    public void setSerumThyroxin(DoubleAttribute serumThyroxin) {
-        this.serumThyroxin = serumThyroxin;
+    // Method to get an attribute's total sum
+    private double getAttributeSum(int pos) {
+
+        double sum = 0;
+
+        switch (pos){
+            case 0:
+                for(Row row: rows){
+                    sum += row.getAttributeClass();
+                }
+                break;
+            case 1:
+                for(Row row: rows){
+                    sum += row.getT3ResinUptakeTest();
+                }
+                break;
+            case 2:
+                for(Row row: rows){
+                    sum += row.getSerumThyroxin();
+                }
+                break;
+            case 3:
+                for(Row row: rows){
+                    sum += row.getSerumTriiodothyronine();
+                }
+                break;
+            case 4:
+                for(Row row: rows){
+                    sum += row.getTsh();
+                }
+                break;
+            case 5:
+                for(Row row: rows){
+                    sum += row.getNewTsh();
+                }
+                break;
+            default:
+
+        }
+
+        return sum;
+
     }
 
-    public DoubleAttribute getSerumTriiodothyronine() {
-        return serumTriiodothyronine;
+    // Method to get an attribute's median according to position and the dataset size "sizeType"
+    // sizeType can be : 1 or 2 otherwise it will return 0
+    private double getAttributeMedian(int pos, int sizeType){
+
+        if(sizeType == PAIR) {
+
+            switch (pos) {
+                case 0:
+                    return (double) (rows.get(rows.size() / 2).getAttributeClass() + rows.get((rows.size() + 1) / 2).getAttributeClass()) / 2;
+                case 1:
+                    return (double) (rows.get(rows.size() / 2).getT3ResinUptakeTest() + rows.get((rows.size() + 1) / 2).getT3ResinUptakeTest()) / 2;
+                case 2:
+                    return (rows.get(rows.size() / 2).getSerumThyroxin() + rows.get((rows.size() + 1) / 2).getSerumThyroxin()) / 2;
+                case 3:
+                    return (rows.get(rows.size() / 2).getSerumTriiodothyronine() + rows.get((rows.size() + 1) / 2).getSerumTriiodothyronine()) / 2;
+                case 4:
+                    return (rows.get(rows.size() / 2).getTsh() + rows.get((rows.size() + 1) / 2).getTsh()) / 2;
+                case 5:
+                    return (rows.get(rows.size() / 2).getNewTsh() + rows.get((rows.size() + 1) / 2).getNewTsh()) / 2;
+                default:
+                    return 0;
+            }
+
+        }
+        else if(sizeType == ODD){
+            switch (pos) {
+                case 0:
+                    return rows.get(rows.size() / 2).getAttributeClass();
+                case 1:
+                    return rows.get(rows.size() / 2).getT3ResinUptakeTest();
+                case 2:
+                    return rows.get(rows.size() / 2).getSerumThyroxin();
+                case 3:
+                    return rows.get(rows.size() / 2).getSerumTriiodothyronine();
+                case 4:
+                    return rows.get(rows.size() / 2).getTsh();
+                case 5:
+                    return rows.get(rows.size() / 2).getNewTsh();
+                default:
+                    return 0;
+            }
+        }
+        else
+            return 0;
+
     }
 
-    public void setSerumTriiodothyronine(DoubleAttribute serumTriiodothyronine) {
-        this.serumTriiodothyronine = serumTriiodothyronine;
-    }
 
-    public DoubleAttribute getTsh() {
-        return tsh;
-    }
-
-    public void setTsh(DoubleAttribute tsh) {
-        this.tsh = tsh;
-    }
-
-    public DoubleAttribute getNewTsh() {
-        return newTsh;
-    }
-
-    public void setNewTsh(DoubleAttribute newTsh) {
-        this.newTsh = newTsh;
-    }
 }
