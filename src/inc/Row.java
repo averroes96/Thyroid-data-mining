@@ -1,7 +1,9 @@
 package inc;
 
+import java.util.Comparator;
+
 // This class represent one single row(line) of the dataset
-public class Row {
+public class Row{
 
     // Attributes of our row
     private int attributeClass;
@@ -114,5 +116,31 @@ public class Row {
         }
     }
 
+    // Method to get attribute value by position
+    public void setValueByPosition(int attrPosition, double value){
+
+        switch (attrPosition){
+            case 0:
+                attributeClass = (int)value;
+                break;
+            case 1:
+                t3ResinUptakeTest = (int)value;
+                break;
+            case 2:
+                serumThyroxin = value;
+                break;
+            case 3:
+                serumTriiodothyronine = value;
+                break;
+            case 4:
+                tsh = value;
+                break;
+            case 5:
+                newTsh = value;
+                break;
+            default:
+                return;
+        }
+    }
 
 }
