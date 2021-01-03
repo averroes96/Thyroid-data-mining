@@ -2,6 +2,9 @@ package inc;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.scene.chart.XYChart;
+
+import java.util.ArrayList;
 
 // This class is the general concept of our entire dataset
 
@@ -163,5 +166,50 @@ public class DataSet implements Init {
 
     }
 
+    public XYChart.Series<String,Integer> getOccurenceCount(int attrPosition){
+
+        ArrayList<Double> values = getUniqueValues(attrPosition);
+        ArrayList<Integer> counts = getOccurences(values, attrPosition);
+        XYChart.Series<String,Integer> lineSeries = new XYChart.Series<>();
+
+        for(int i = 0; i < values.size(); i++){
+            lineSeries.getData().add(new XYChart.Data<>(String.valueOf(values.get(i)),counts.get(i)));
+        }
+
+        return lineSeries;
+
+    }
+
+    private ArrayList<Integer> getOccurences(ArrayList<Double> values, int pos) {
+
+        ArrayList<Integer> temp = new ArrayList<>();
+
+        for(Double dbl : values){
+            int cpt = 0;
+            for(Row row : rows){
+                if(row.getValueByPosition(pos) == dbl){
+                    cpt++;
+                }
+            }
+            temp.add(cpt);
+        }
+
+        return temp;
+
+    }
+
+
+    private ArrayList<Double> getUniqueValues(int pos) {
+
+        ArrayList<Double> temp = new ArrayList<>();
+
+        for(Row row : rows){
+            if(!temp.contains(row.getValueByPosition(pos))){
+                temp.add(row.getValueByPosition(pos));
+            }
+        }
+
+        return temp;
+    }
 
 }

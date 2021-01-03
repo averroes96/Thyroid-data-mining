@@ -29,7 +29,7 @@ public class Parser {
             row.setSerumThyroxin(Double.parseDouble(arr[2]));
             row.setSerumTriiodothyronine(Double.parseDouble(arr[3]));
             row.setTsh(Double.parseDouble(arr[4]));
-            row.setNewTsh(Double.parseDouble(arr[4]));
+            row.setNewTsh(Double.parseDouble(arr[5]));
 
             rows.add(row);
             }
