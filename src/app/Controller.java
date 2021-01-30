@@ -1,5 +1,9 @@
 package app;
 
+import animatefx.animation.ZoomIn;
+import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXDialog;
+import com.jfoenix.controls.JFXScrollPane;
 import inc.Common;
 import inc.DataSet;
 import inc.Parser;
@@ -11,22 +15,27 @@ import javafx.fxml.Initializable;
 import javafx.scene.chart.*;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.StackPane;
 
-import java.io.IOException;
+import java.io.*;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 public class Controller implements Initializable {
 
     @FXML
-    private ImageView informationIV;
+    private ImageView informationIV,boxPlotIV;
 
     @FXML
-    private AnchorPane valuesAP,histoAP,scatterAP;
+    private JFXButton displayBtn;
+
+    @FXML
+    private AnchorPane valuesAP,histoAP,scatterAP,boxPlotAP;
 
     @FXML
     LineChart<String,Integer> valuesLC;
@@ -38,7 +47,19 @@ public class Controller implements Initializable {
     ScatterChart valuesSC;
 
     @FXML
-    private Label meanLabel,medianLabel,modeLabel,histogramTAB,valuesTAB,scatterTAB;
+    javafx.scene.chart.NumberAxis yAxis,xAxis;
+
+    @FXML
+    JFXDialog dialog;
+
+    @FXML
+    StackPane stackPane;
+
+    @FXML
+    JFXScrollPane scrollPane;
+
+    @FXML
+    private Label meanLabel,medianLabel,modeLabel,histogramTAB,valuesTAB,scatterTAB,boxPlotTAB;
 
     @FXML
     private ChoiceBox<String> attributeCB,yAttrCB;
@@ -72,10 +93,7 @@ public class Controller implements Initializable {
         });
 
         yAttrCB.setOnAction(action -> {
-            valuesSC.getData().clear();
-            XYChart.Series<String,Double> scatterSerries = dataSet.getScatterData(currPostion, getYAttr(yAttrCB.getValue()));
-            valuesSC.getData().addAll(scatterSerries);
-
+            initScatterChart();
         });
 
         valuesTAB.setOnMouseClicked(action -> {
@@ -90,6 +108,78 @@ public class Controller implements Initializable {
             selectTab(action);
         });
 
+        boxPlotTAB.setOnMouseClicked(action -> {
+            selectTab(action);
+        });
+
+        informationIV.setOnMouseClicked(action -> {
+            InputStream in = getClass().getResourceAsStream("/ds/Thyroid_Dataset_Information.txt");
+            BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+            StringBuilder text = new StringBuilder();
+            String line = "";
+            while (true) {
+                try {
+                    if ((line = reader.readLine()) == null) break;
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                text.append(line).append("\n");
+            }
+
+            Common.customDialog(dialog, stackPane, scrollPane, "", text.toString());
+
+            scrollPane.setVisible(true);
+            scrollPane.setContent(stackPane);
+        });
+
+        displayBtn.setOnAction(action -> {
+            String text = null;
+            String title = "Total number of rows:\t" + dataSet.getRows().size();
+            try {
+                text = getDisplayedDataSet();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            Common.customDialog(dialog, stackPane, scrollPane, title, text);
+            scrollPane.setVisible(true);
+            scrollPane.setContent(stackPane);
+        });
+
+    }
+
+    private String getDisplayedDataSet() throws IOException {
+        DataSet temp = new DataSet();
+        Parser parser = new Parser();
+
+        temp.setRows(parser.getRows("/ds/Thyroid_Dataset.txt"));
+        StringBuilder stringBuilder = new StringBuilder();
+        for(Row row : temp.getRows()){
+            stringBuilder.append(row).append("\n");
+        }
+
+        return stringBuilder.toString();
+    }
+
+    private void initScatterChart() {
+        valuesSC.getData().clear();
+        double xAxisMin = dataSet.getArrtibuteMin(currPostion);
+        double xAxisMax = dataSet.getArrtibuteMax(currPostion);
+        double xRange = (xAxisMax - xAxisMin)/10;
+        xAxis.setLowerBound(xAxisMin);
+        xAxis.setUpperBound(xAxisMax);
+        xAxis.setTickUnit(xRange);
+        xAxis.setLabel(attributeCB.getValue());
+        double yAxisMin = dataSet.getArrtibuteMin(getYAttr(yAttrCB.getValue()));
+        double yAxisMax = dataSet.getArrtibuteMax(getYAttr(yAttrCB.getValue()));
+        double yRange = (yAxisMax - yAxisMin)/10;
+        yAxis.setLowerBound(yAxisMin);
+        yAxis.setUpperBound(yAxisMax);
+        yAxis.setTickUnit(yRange);
+        xAxis.setLabel(yAttrCB.getValue());
+        XYChart.Series<Number,Number> scatterSeries = dataSet.getScatterData(currPostion, getYAttr(yAttrCB.getValue()));
+        valuesSC.getData().add(scatterSeries);
+
+
     }
 
     private void selectTab(MouseEvent action) {
@@ -98,16 +188,25 @@ public class Controller implements Initializable {
             valuesAP.setVisible(true);
             histoAP.setVisible(false);
             scatterAP.setVisible(false);
+            boxPlotAP.setVisible(false);
         }
         else if(action.getSource() == histogramTAB){
             valuesAP.setVisible(false);
             histoAP.setVisible(true);
             scatterAP.setVisible(false);
+            boxPlotAP.setVisible(false);
         }
         else if(action.getSource() == scatterTAB){
             valuesAP.setVisible(false);
             histoAP.setVisible(false);
             scatterAP.setVisible(true);
+            boxPlotAP.setVisible(false);
+        }
+        else if(action.getSource() == boxPlotTAB){
+            valuesAP.setVisible(false);
+            histoAP.setVisible(false);
+            scatterAP.setVisible(false);
+            boxPlotAP.setVisible(true);
         }
     }
 
@@ -140,11 +239,18 @@ public class Controller implements Initializable {
         valuesSC.getData().clear();
         XYChart.Series<String,Integer> lineSeries = dataSet.getOccurenceCount(currPostion);
         XYChart.Series<String,Integer> barChartSeries = dataSet.getHistogramCount(currPostion);
-        XYChart.Series<String,Double> scatterSerries = dataSet.getScatterData(currPostion, getYAttr(yAttrCB.getValue()));
-        valuesLC.getData().addAll(lineSeries);
-        valuesBC.getData().addAll(barChartSeries);
-        valuesSC.getData().addAll(scatterSerries);
+        valuesBC.getData().add(barChartSeries);
+        valuesLC.getData().add(lineSeries);
+        initScatterChart();
+        initBoxPlot(currPostion);
 
+    }
+
+    private void initBoxPlot(int currPostion) {
+        String name = "/ds/boxplots/" + currPostion + ".png";
+        new ZoomIn(boxPlotIV).play();
+        boxPlotIV.setImage(new Image(ClassLoader.class.getResourceAsStream(name),
+                boxPlotIV.getFitWidth(), boxPlotIV.getFitHeight(), false, false));
     }
 
     private int getYAttr(String values) {
@@ -161,9 +267,9 @@ public class Controller implements Initializable {
     }
 
     private void getDataSet() {
-
+        Parser parser = new Parser();
         try {
-            dataSet.setRows(Parser.getRows("/src/ds/Thyroid_Dataset.txt"));
+            dataSet.setRows(parser.getRows("/ds/Thyroid_Dataset.txt"));
         } catch (IOException e) {
             e.printStackTrace();
         }

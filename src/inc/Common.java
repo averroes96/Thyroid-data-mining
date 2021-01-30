@@ -1,6 +1,13 @@
 package inc;
 
+import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXDialog;
+import com.jfoenix.controls.JFXDialogLayout;
+import com.jfoenix.controls.JFXScrollPane;
 import javafx.collections.ObservableList;
+import javafx.scene.control.Label;
+import javafx.scene.layout.StackPane;
+import javafx.scene.text.Text;
 
 public class Common {
     public static ObservableList<Row> heapSort(ObservableList<Row> list, int position){
@@ -43,6 +50,43 @@ public class Common {
             list.set(largest, temp);
             heapify(list, n, largest, pos);
         }
+
+    }
+
+    public static void loadDialog(JFXDialog dialog, JFXDialogLayout layout, StackPane stackPane, JFXScrollPane scrollPane){
+
+        stackPane.setVisible(true);
+        JFXButton btn = new JFXButton("Return");
+        btn.setCancelButton(true);
+        dialog = new JFXDialog(stackPane, layout , JFXDialog.DialogTransition.CENTER);
+        dialog.setOnDialogClosed(action -> {
+            stackPane.setVisible(false);
+            scrollPane.setVisible(false);
+        });
+        JFXDialog finalDialog = dialog;
+        btn.setOnAction(Action -> {
+            finalDialog.close();
+            stackPane.setVisible(false);
+            btn.setDefaultButton(false);
+            scrollPane.setVisible(false);
+        });
+        layout.setActions(btn);
+        dialog.show();
+
+    }
+
+    public static void customDialog(JFXDialog dialog, StackPane stackPane, JFXScrollPane scrollPane, String title, String body){
+        JFXDialogLayout layout = new JFXDialogLayout();
+        initLayout(layout, title, body);
+
+        loadDialog(dialog, layout, stackPane, scrollPane);
+    }
+
+    public static void initLayout(JFXDialogLayout layout, String header, String body){
+
+        Label label = new Label(header);
+        layout.setHeading(label);
+        layout.setBody(new Text(body));
 
     }
 }

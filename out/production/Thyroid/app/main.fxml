@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXDialog?>
+<?import com.jfoenix.controls.JFXScrollPane?>
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.chart.BarChart?>
 <?import javafx.scene.chart.CategoryAxis?>
@@ -13,6 +16,7 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
@@ -65,41 +69,50 @@
                            <children>
                               <Label id="menu-label" alignment="CENTER" maxWidth="1.7976931348623157E308" prefHeight="64.0" text="Central Tendency">
                                  <font>
-                                    <Font name="System Bold" size="18.0" />
+                                    <Font name="System Bold" size="16.0" />
                                  </font>
                               </Label>
                               <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" VBox.vgrow="ALWAYS">
                                  <children>
                                     <Label alignment="CENTER" maxWidth="1.7976931348623157E308" prefHeight="48.0" text="Mean" textFill="#003f5c">
                                        <font>
-                                          <Font name="System Bold" size="18.0" />
+                                          <Font name="System Italic" size="16.0" />
                                        </font>
                                     </Label>
                                     <Label fx:id="meanLabel" alignment="CENTER" maxWidth="1.7976931348623157E308" prefHeight="48.0" text="Mean (Result)" textFill="#ff6361">
                                        <font>
-                                          <Font name="System Italic" size="18.0" />
+                                          <Font name="System Italic" size="16.0" />
                                        </font>
                                     </Label>
                                     <Label alignment="CENTER" maxWidth="1.7976931348623157E308" prefHeight="48.0" text="Median" textFill="#003f5c">
                                        <font>
-                                          <Font name="System Bold" size="18.0" />
+                                          <Font name="System Italic" size="16.0" />
                                        </font>
                                     </Label>
                                     <Label fx:id="medianLabel" alignment="CENTER" maxWidth="1.7976931348623157E308" prefHeight="48.0" text="Median (Result)" textFill="#ff6361">
                                        <font>
-                                          <Font name="System Italic" size="18.0" />
+                                          <Font name="System Italic" size="16.0" />
                                        </font>
                                     </Label>
                                     <Label alignment="CENTER" maxWidth="1.7976931348623157E308" prefHeight="48.0" text="Mode" textFill="#003f5c">
                                        <font>
-                                          <Font name="System Bold" size="18.0" />
+                                          <Font name="System Italic" size="16.0" />
                                        </font>
                                     </Label>
                                     <Label fx:id="modeLabel" alignment="CENTER" maxWidth="1.7976931348623157E308" prefHeight="48.0" text="Mode (Result)" textFill="#ff6361">
                                        <font>
-                                          <Font name="System Italic" size="18.0" />
+                                          <Font name="System Italic" size="16.0" />
                                        </font>
                                     </Label>
+                                    <VBox alignment="BOTTOM_CENTER" maxWidth="1.7976931348623157E308" prefHeight="96.0">
+                                       <children>
+                                          <JFXButton fx:id="displayBtn" buttonType="RAISED" prefHeight="32.0" prefWidth="128.0" style="-fx-background-color: #003f5c;" text="See dataset" textFill="#eeeeee">
+                                             <cursor>
+                                                <Cursor fx:constant="HAND" />
+                                             </cursor>
+                                          </JFXButton>
+                                       </children>
+                                    </VBox>
                                  </children>
                               </VBox>
                            </children>
@@ -110,7 +123,7 @@
                                  <children>
                                     <Label id="menu-label" fx:id="valuesTAB" alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Values distribution" HBox.hgrow="ALWAYS">
                                        <font>
-                                          <Font name="System Bold" size="18.0" />
+                                          <Font name="System Bold" size="16.0" />
                                        </font>
                                        <cursor>
                                           <Cursor fx:constant="HAND" />
@@ -118,15 +131,23 @@
                                     </Label>
                                     <Label id="menu-label" fx:id="histogramTAB" alignment="CENTER" layoutX="10.0" layoutY="10.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Histogram" HBox.hgrow="ALWAYS">
                                        <font>
-                                          <Font name="System Bold" size="18.0" />
+                                          <Font name="System Bold" size="16.0" />
                                        </font>
                                        <cursor>
                                           <Cursor fx:constant="HAND" />
                                        </cursor>
                                     </Label>
-                                    <Label id="menu-label" fx:id="scatterTAB" alignment="CENTER" layoutX="10.0" layoutY="10.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Scatter plot" HBox.hgrow="ALWAYS">
+                                    <Label id="menu-label" fx:id="scatterTAB" alignment="CENTER" layoutX="10.0" layoutY="10.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Scatter Diagram" HBox.hgrow="ALWAYS">
                                        <font>
-                                          <Font name="System Bold" size="18.0" />
+                                          <Font name="System Bold" size="16.0" />
+                                       </font>
+                                       <cursor>
+                                          <Cursor fx:constant="HAND" />
+                                       </cursor>
+                                    </Label>
+                                    <Label id="menu-label" fx:id="boxPlotTAB" alignment="CENTER" layoutX="519.0" layoutY="10.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="BoxPlot Diagram">
+                                       <font>
+                                          <Font name="System Bold" size="16.0" />
                                        </font>
                                        <cursor>
                                           <Cursor fx:constant="HAND" />
@@ -143,10 +164,10 @@
                                        <children>
                                           <LineChart fx:id="valuesLC" prefHeight="419.0" prefWidth="712.0" AnchorPane.bottomAnchor="16.0" AnchorPane.leftAnchor="8.0" AnchorPane.rightAnchor="8.0" AnchorPane.topAnchor="16.0">
                                             <xAxis>
-                                              <CategoryAxis side="BOTTOM" />
+                                              <CategoryAxis label="Values" side="BOTTOM" />
                                             </xAxis>
                                             <yAxis>
-                                              <NumberAxis side="LEFT" />
+                                              <NumberAxis label="Occurences" side="LEFT" />
                                             </yAxis>
                                           </LineChart>
                                        </children>
@@ -155,10 +176,10 @@
                                        <children>
                                           <BarChart fx:id="valuesBC" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                             <xAxis>
-                                              <CategoryAxis side="BOTTOM" />
+                                              <CategoryAxis label="Intervals" side="BOTTOM" />
                                             </xAxis>
                                             <yAxis>
-                                              <NumberAxis side="LEFT" />
+                                              <NumberAxis label="Occurences" side="LEFT" />
                                             </yAxis>
                                           </BarChart>
                                        </children>
@@ -167,15 +188,15 @@
                                        <children>
                                           <ScatterChart fx:id="valuesSC" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="64.0">
                                             <xAxis>
-                                              <CategoryAxis side="BOTTOM" />
+                                              <NumberAxis label="X Attribute" side="BOTTOM" fx:id="xAxis" />
                                             </xAxis>
                                             <yAxis>
-                                              <NumberAxis side="LEFT" />
+                                              <NumberAxis fx:id="yAxis" label="Y Attribute" side="LEFT" />
                                             </yAxis>
                                           </ScatterChart>
                                           <HBox alignment="CENTER" layoutX="-14.0" layoutY="14.0" maxWidth="1.7976931348623157E308" prefHeight="83.0" prefWidth="728.0" spacing="16.0" AnchorPane.leftAnchor="8.0" AnchorPane.rightAnchor="8.0" AnchorPane.topAnchor="0.0">
                                              <children>
-                                                <Label alignment="CENTER" maxWidth="1.7976931348623157E308" prefHeight="42.0" text="Y values" HBox.hgrow="ALWAYS">
+                                                <Label alignment="CENTER" maxWidth="1.7976931348623157E308" prefHeight="42.0" text="X Attribute" HBox.hgrow="ALWAYS">
                                                    <font>
                                                       <Font name="System Bold" size="18.0" />
                                                    </font>
@@ -192,6 +213,11 @@
                                           </HBox>
                                        </children>
                                     </AnchorPane>
+                                    <AnchorPane fx:id="boxPlotAP" layoutX="10.0" layoutY="10.0" maxHeight="1.7976931348623157E308" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: white;" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                       <children>
+                                          <ImageView fx:id="boxPlotIV" fitHeight="512.0" fitWidth="800.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                       </children>
+                                    </AnchorPane>
                                  </children>
                               </AnchorPane>
                            </children>
@@ -202,5 +228,14 @@
             </VBox>
          </children>
       </VBox>
+      <JFXScrollPane fx:id="scrollPane" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <StackPane fx:id="stackPane" prefHeight="150.0" prefWidth="200.0" visible="false">
+               <children>
+                  <JFXDialog fx:id="dialog" />
+               </children>
+            </StackPane>
+         </children>
+      </JFXScrollPane>
    </children>
 </AnchorPane>

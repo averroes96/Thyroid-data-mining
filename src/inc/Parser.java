@@ -4,18 +4,19 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 
 public class Parser {
 
 
     // Method for converting a benchmark into a graph
-    public static ObservableList<Row> getRows(String filePath) throws IOException {
+    public  ObservableList<Row> getRows(String filePath) throws IOException {
 
         String currPath = new File("").getAbsolutePath();
-        System.out.println(currPath);
 
-        FileReader reader = new FileReader(currPath + filePath);
-        BufferedReader br = new BufferedReader(reader);
+//        FileReader reader = new FileReader( filePath);
+        InputStream inputStream = getClass().getResourceAsStream(filePath) ;
+        BufferedReader br = new BufferedReader(new InputStreamReader(inputStream , StandardCharsets.UTF_8));
         ObservableList<Row> rows = FXCollections.observableArrayList();
 
         // read line by line

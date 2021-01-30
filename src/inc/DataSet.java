@@ -3,9 +3,17 @@ package inc;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.chart.XYChart;
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.XYPlot;
+import org.jfree.data.statistics.*;
 
+import java.awt.*;
 import java.text.DecimalFormat;
+import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Date;
 
 // This class is the general concept of our entire dataset
 
@@ -189,11 +197,11 @@ public class DataSet implements Init {
         double range =  (values.get(values.size()-1) - values.get(0)) / 10;
         double minVal = values.get(0);
         double maxVal = values.get(values.size()-1);
-        DecimalFormat numberFormat = new DecimalFormat("#.00");
+        DecimalFormat numberFormat = new DecimalFormat("#.##");
 
         while(minVal < maxVal){
             double rangeEdge = minVal + range;
-            ranges.add(numberFormat.format(minVal) + "_" + numberFormat.format(rangeEdge));
+            ranges.add(numberFormat.format(minVal) + "___" + numberFormat.format(rangeEdge));
             minVal = rangeEdge;
         }
 
@@ -213,16 +221,16 @@ public class DataSet implements Init {
         ArrayList<Integer> temp = new ArrayList<>();
 
         for (String range : ranges){
-            String[] edges = range.split("_");
+            String[] edges = range.split("___");
 
-            for(String str : edges){
-                System.out.println(str);
-            }
-            double minval = Double.parseDouble(edges[0]);
-            double maxval = Double.parseDouble(edges[1]);
+            double minval = Float.parseFloat(edges[0]);
+            double maxval = Float.parseFloat(edges[1]);
+            double max = getArrtibuteMax(attrPosition);
             int cpt = 0;
 
             for(Row row : rows){
+                if(maxval == max && row.getValueByPosition(attrPosition)>= minval)
+                    cpt++;
                 if(row.getValueByPosition(attrPosition) >= minval && row.getValueByPosition(attrPosition) < maxval){
                     cpt++;
                 }
@@ -264,14 +272,94 @@ public class DataSet implements Init {
         return temp;
     }
 
-    public XYChart.Series<String, Double> getScatterData(int currPostion, int yAttr) {
+    public XYChart.Series<Number, Number> getScatterData(int currPostion, int yAttr) {
 
-        XYChart.Series<String, Double> series = new XYChart.Series<>();
+        XYChart.Series<Number, Number> series = new XYChart.Series<>();
 
         for(Row row : rows){
-            series.getData().add(new XYChart.Data<>(String.valueOf(row.getValueByPosition(yAttr)), row.getValueByPosition(currPostion)));
+            series.getData().add(new XYChart.Data<>(row.getValueByPosition(currPostion), row.getValueByPosition(yAttr)));
         }
 
         return series;
+    }
+
+    public double getArrtibuteMin(int pos){
+
+        double min = rows.get(0).getValueByPosition(pos);
+
+        for(Row row : rows) {
+            if(row.getValueByPosition(pos) < min)
+                min = row.getValueByPosition(pos);
+        }
+
+        return min;
+    }
+
+    public double getArrtibuteMax(int pos){
+
+        double max = rows.get(0).getValueByPosition(pos);
+
+        for(Row row : rows) {
+            if(row.getValueByPosition(pos) > max)
+                max = row.getValueByPosition(pos);
+        }
+
+        return max;
+    }
+
+    public BoxAndWhiskerCategoryDataset getAttrBoxPlot(int currPostion) {
+
+        ArrayList<Double> values = getValuesByPosition(0);
+        ArrayList<Double> values1 = getValuesByPosition(1);
+        ArrayList<Double> values2 = getValuesByPosition(2);
+
+        DefaultBoxAndWhiskerCategoryDataset dataset = new DefaultBoxAndWhiskerCategoryDataset();
+
+        dataset.add(values, "Distribution", "Attribute");
+        dataset.add(values1, "Distribution", "Attribute");
+        dataset.add(values2, "Distribution", "Attribute");
+
+
+        return dataset;
+
+    }
+
+    private ArrayList<Double> getValuesByPosition(int currPostion) {
+
+        ArrayList<Double> values = new ArrayList<>();
+
+        for(Row row : rows)
+            values.add(row.getValueByPosition(currPostion));
+
+        return values;
+
+    }
+
+    public BoxAndWhiskerXYDataset createBoxPLot(int currPostion) {
+
+        Date date = Date.from(Instant.now());
+        ArrayList<Double> values = getValuesByPosition(0);
+        DefaultBoxAndWhiskerXYDataset dataset = new DefaultBoxAndWhiskerXYDataset("Test");
+
+        dataset.add(date, BoxAndWhiskerCalculator.calculateBoxAndWhiskerStatistics(values));
+
+        return dataset;
+
+    }
+
+    public JFreeChart createBPChart(BoxAndWhiskerXYDataset dataset) {
+
+
+        String title = "Data Mining - Boite � moustache";
+        String axeX = "Test";
+        String axeY = "Valeurs";
+        boolean legend = true;
+        JFreeChart BoxAndWhisker = ChartFactory.createBoxAndWhiskerChart(title, axeX, axeY, dataset, legend);
+        BoxAndWhisker.setBackgroundPaint(new Color(249, 231, 236));
+        XYPlot plot = (XYPlot)BoxAndWhisker.getPlot();
+        plot.setBackgroundPaint(new Color(255,228,196));
+
+        return BoxAndWhisker;
+
     }
 }
