@@ -8,12 +8,11 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.chart.LineChart;
-import javafx.scene.chart.NumberAxis;
-import javafx.scene.chart.XYChart;
+import javafx.scene.chart.*;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 
 import java.io.IOException;
@@ -27,16 +26,22 @@ public class Controller implements Initializable {
     private ImageView informationIV;
 
     @FXML
-    private AnchorPane valuesAP;
+    private AnchorPane valuesAP,histoAP,scatterAP;
 
     @FXML
     LineChart<String,Integer> valuesLC;
 
     @FXML
-    private Label meanLabel,medianLabel,modeLabel;
+    BarChart valuesBC;
 
     @FXML
-    private ChoiceBox<String> attributeCB;
+    ScatterChart valuesSC;
+
+    @FXML
+    private Label meanLabel,medianLabel,modeLabel,histogramTAB,valuesTAB,scatterTAB;
+
+    @FXML
+    private ChoiceBox<String> attributeCB,yAttrCB;
 
     private DataSet dataSet = new DataSet();
     private ObservableList<String> attributesList = FXCollections.observableArrayList();
@@ -46,7 +51,16 @@ public class Controller implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
 
         getDataSet();
-        initAttrList();
+
+        attributesList.addAll("Class attribute",
+                "T3-resin uptake test",
+                "Total Serum thyroxin",
+                "Total serum triiodothyronine",
+                "basal thyroid-stimulating hormone",
+                "Maximal absolute difference of TSH value");
+
+        initAttrList(attributeCB, 0);
+        initAttrList(yAttrCB, 5);
 
         initFields();
         getResults();
@@ -57,6 +71,44 @@ public class Controller implements Initializable {
             getResults();
         });
 
+        yAttrCB.setOnAction(action -> {
+            valuesSC.getData().clear();
+            XYChart.Series<String,Double> scatterSerries = dataSet.getScatterData(currPostion, getYAttr(yAttrCB.getValue()));
+            valuesSC.getData().addAll(scatterSerries);
+
+        });
+
+        valuesTAB.setOnMouseClicked(action -> {
+            selectTab(action);
+        });
+
+        histogramTAB.setOnMouseClicked(action -> {
+            selectTab(action);
+        });
+
+        scatterTAB.setOnMouseClicked(action -> {
+            selectTab(action);
+        });
+
+    }
+
+    private void selectTab(MouseEvent action) {
+
+        if(action.getSource() == valuesTAB){
+            valuesAP.setVisible(true);
+            histoAP.setVisible(false);
+            scatterAP.setVisible(false);
+        }
+        else if(action.getSource() == histogramTAB){
+            valuesAP.setVisible(false);
+            histoAP.setVisible(true);
+            scatterAP.setVisible(false);
+        }
+        else if(action.getSource() == scatterTAB){
+            valuesAP.setVisible(false);
+            histoAP.setVisible(false);
+            scatterAP.setVisible(true);
+        }
     }
 
     private void getSelectedPosition(String selectedItem) {
@@ -84,9 +136,28 @@ public class Controller implements Initializable {
 
         dataSet.setRows(Common.heapSort(dataSet.getRows(), currPostion));
         valuesLC.getData().clear();
+        valuesBC.getData().clear();
+        valuesSC.getData().clear();
         XYChart.Series<String,Integer> lineSeries = dataSet.getOccurenceCount(currPostion);
+        XYChart.Series<String,Integer> barChartSeries = dataSet.getHistogramCount(currPostion);
+        XYChart.Series<String,Double> scatterSerries = dataSet.getScatterData(currPostion, getYAttr(yAttrCB.getValue()));
         valuesLC.getData().addAll(lineSeries);
+        valuesBC.getData().addAll(barChartSeries);
+        valuesSC.getData().addAll(scatterSerries);
 
+    }
+
+    private int getYAttr(String values) {
+
+        switch (values){
+            case "Class attribute": return 0;
+            case "T3-resin uptake test": return 1;
+            case "Total Serum thyroxin": return 2;
+            case "Total serum triiodothyronine": return 3;
+            case "basal thyroid-stimulating hormone": return 4;
+            case "Maximal absolute difference of TSH value": return 5;
+            default: return  -1;
+        }
     }
 
     private void getDataSet() {
@@ -97,21 +168,13 @@ public class Controller implements Initializable {
             e.printStackTrace();
         }
 
-        for (Row row : dataSet.getRows()){
-            System.out.println(row);
-        }
+    }
+
+    private void initAttrList(ChoiceBox choiceBox, int pos){
+
+        choiceBox.setItems(attributesList);
+        choiceBox.getSelectionModel().select(pos);
 
     }
 
-    private void initAttrList(){
-        attributesList.addAll("Class attribute",
-                "T3-resin uptake test",
-                "Total Serum thyroxin",
-                "Total serum triiodothyronine",
-                "basal thyroid-stimulating hormone",
-                "Maximal absolute difference of TSH value");
-
-        attributeCB.setItems(attributesList);
-        attributeCB.getSelectionModel().select(0);
-    }
 }

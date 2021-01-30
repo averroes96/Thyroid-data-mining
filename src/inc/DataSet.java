@@ -4,6 +4,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.chart.XYChart;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 // This class is the general concept of our entire dataset
@@ -180,6 +181,58 @@ public class DataSet implements Init {
 
     }
 
+    public XYChart.Series<String,Integer> getHistogramCount(int attrPosition){
+
+        ArrayList<Double> values = getUniqueValues(attrPosition);
+        ArrayList<String> ranges = new ArrayList<>();
+
+        double range =  (values.get(values.size()-1) - values.get(0)) / 10;
+        double minVal = values.get(0);
+        double maxVal = values.get(values.size()-1);
+        DecimalFormat numberFormat = new DecimalFormat("#.00");
+
+        while(minVal < maxVal){
+            double rangeEdge = minVal + range;
+            ranges.add(numberFormat.format(minVal) + "_" + numberFormat.format(rangeEdge));
+            minVal = rangeEdge;
+        }
+
+        ArrayList<Integer> counts = getHistogramOccurences(ranges, attrPosition);
+        XYChart.Series<String,Integer> lineSeries = new XYChart.Series<>();
+
+        for(int i = 0; i < ranges.size(); i++){
+            lineSeries.getData().add(new XYChart.Data<>(String.valueOf(ranges.get(i)),counts.get(i)));
+        }
+
+        return lineSeries;
+
+    }
+
+    private ArrayList<Integer> getHistogramOccurences(ArrayList<String> ranges, int attrPosition) {
+
+        ArrayList<Integer> temp = new ArrayList<>();
+
+        for (String range : ranges){
+            String[] edges = range.split("_");
+
+            for(String str : edges){
+                System.out.println(str);
+            }
+            double minval = Double.parseDouble(edges[0]);
+            double maxval = Double.parseDouble(edges[1]);
+            int cpt = 0;
+
+            for(Row row : rows){
+                if(row.getValueByPosition(attrPosition) >= minval && row.getValueByPosition(attrPosition) < maxval){
+                    cpt++;
+                }
+            }
+            temp.add(cpt);
+        }
+
+        return temp;
+    }
+
     private ArrayList<Integer> getOccurences(ArrayList<Double> values, int pos) {
 
         ArrayList<Integer> temp = new ArrayList<>();
@@ -198,7 +251,6 @@ public class DataSet implements Init {
 
     }
 
-
     private ArrayList<Double> getUniqueValues(int pos) {
 
         ArrayList<Double> temp = new ArrayList<>();
@@ -212,4 +264,14 @@ public class DataSet implements Init {
         return temp;
     }
 
+    public XYChart.Series<String, Double> getScatterData(int currPostion, int yAttr) {
+
+        XYChart.Series<String, Double> series = new XYChart.Series<>();
+
+        for(Row row : rows){
+            series.getData().add(new XYChart.Data<>(String.valueOf(row.getValueByPosition(yAttr)), row.getValueByPosition(currPostion)));
+        }
+
+        return series;
+    }
 }

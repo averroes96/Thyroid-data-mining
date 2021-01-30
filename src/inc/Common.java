@@ -3,7 +3,6 @@ package inc;
 import javafx.collections.ObservableList;
 
 public class Common {
-
     public static ObservableList<Row> heapSort(ObservableList<Row> list, int position){
 
         int n = list.size();

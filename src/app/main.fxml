@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.Cursor?>
+<?import javafx.scene.chart.BarChart?>
 <?import javafx.scene.chart.CategoryAxis?>
 <?import javafx.scene.chart.LineChart?>
 <?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.chart.ScatterChart?>
 <?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.effect.DropShadow?>
@@ -16,143 +18,188 @@
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1024.0" style="-fx-background-color: #eee;" stylesheets="@../css/custom.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.Controller">
    <children>
-      <HBox alignment="CENTER_LEFT" layoutX="112.0" layoutY="91.0" maxWidth="1.7976931348623157E308" prefHeight="64.0" prefWidth="992.0" spacing="8.0" AnchorPane.leftAnchor="16.0" AnchorPane.rightAnchor="16.0" AnchorPane.topAnchor="8.0">
+      <VBox prefHeight="200.0" prefWidth="100.0" spacing="32.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="16.0" AnchorPane.rightAnchor="16.0" AnchorPane.topAnchor="16.0">
          <children>
-            <ImageView fx:id="informationIV" fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@../img/info_32.png" />
-               </image>
-               <cursor>
-                  <Cursor fx:constant="HAND" />
-               </cursor>
-            </ImageView>
-            <Label text="Thyroid dataset study" textFill="#003f5c">
-               <font>
-                  <Font name="Consolas Bold" size="24.0" />
-               </font>
-            </Label>
-            <HBox alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" prefHeight="100.0" prefWidth="200.0" spacing="16.0" HBox.hgrow="ALWAYS">
+            <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" prefHeight="64.0" prefWidth="992.0" spacing="8.0">
                <children>
-                  <Label alignment="CENTER" maxWidth="1.7976931348623157E308" prefHeight="42.0" text="Attribute">
-                     <font>
-                        <Font name="System Bold" size="18.0" />
-                     </font>
-                  </Label>
-                  <ChoiceBox fx:id="attributeCB" prefHeight="42.0" prefWidth="256.0">
-                     <effect>
-                        <DropShadow color="#000000b2" height="8.0" radius="3.5" width="8.0" />
-                     </effect>
+                  <ImageView fx:id="informationIV" fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../img/info_32.png" />
+                     </image>
                      <cursor>
                         <Cursor fx:constant="HAND" />
-                     </cursor></ChoiceBox>
-               </children>
-            </HBox>
-         </children>
-      </HBox>
-      <VBox alignment="CENTER" layoutX="16.0" layoutY="65.0" prefHeight="693.0" prefWidth="992.0" AnchorPane.leftAnchor="16.0" AnchorPane.rightAnchor="16.0">
-         <children>
-            <HBox prefHeight="544.0" prefWidth="992.0" spacing="8.0">
-               <children>
-                  <VBox alignment="TOP_CENTER" prefHeight="475.0" prefWidth="256.0" style="-fx-background-color: white; -fx-background-radius: 8 8 0 0;">
-                     <effect>
-                        <DropShadow color="#00000099" height="16.0" radius="7.5" width="16.0" />
-                     </effect>
+                     </cursor>
+                  </ImageView>
+                  <Label text="Thyroid dataset study" textFill="#003f5c">
+                     <font>
+                        <Font name="Consolas Bold" size="24.0" />
+                     </font>
+                  </Label>
+                  <HBox alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" prefHeight="100.0" prefWidth="200.0" spacing="16.0" HBox.hgrow="ALWAYS">
                      <children>
-                        <Label id="menu-label" alignment="CENTER" maxWidth="1.7976931348623157E308" prefHeight="64.0" text="Central Tendency">
+                        <Label alignment="CENTER" maxWidth="1.7976931348623157E308" prefHeight="42.0" text="Attribute">
                            <font>
                               <Font name="System Bold" size="18.0" />
                            </font>
                         </Label>
-                        <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" VBox.vgrow="ALWAYS">
+                        <ChoiceBox fx:id="attributeCB" prefHeight="42.0" prefWidth="256.0">
+                           <effect>
+                              <DropShadow color="#000000b2" height="8.0" radius="3.5" width="8.0" />
+                           </effect>
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
+                        </ChoiceBox>
+                     </children>
+                  </HBox>
+               </children>
+            </HBox>
+            <VBox alignment="CENTER" prefHeight="693.0" prefWidth="992.0" VBox.vgrow="ALWAYS">
+               <children>
+                  <HBox prefHeight="544.0" prefWidth="992.0" spacing="8.0" VBox.vgrow="ALWAYS">
+                     <children>
+                        <VBox alignment="TOP_CENTER" prefHeight="475.0" prefWidth="256.0" style="-fx-background-color: white; -fx-background-radius: 8 8 0 0;">
+                           <effect>
+                              <DropShadow color="#00000099" height="16.0" radius="7.5" width="16.0" />
+                           </effect>
                            <children>
-                              <Label alignment="CENTER" maxWidth="1.7976931348623157E308" prefHeight="48.0" text="Mean" textFill="#003f5c">
+                              <Label id="menu-label" alignment="CENTER" maxWidth="1.7976931348623157E308" prefHeight="64.0" text="Central Tendency">
                                  <font>
                                     <Font name="System Bold" size="18.0" />
                                  </font>
                               </Label>
-                              <Label fx:id="meanLabel" alignment="CENTER" maxWidth="1.7976931348623157E308" prefHeight="48.0" text="Mean (Result)" textFill="#ff6361">
-                                 <font>
-                                    <Font name="Consolas" size="18.0" />
-                                 </font>
-                              </Label>
-                              <Label alignment="CENTER" maxWidth="1.7976931348623157E308" prefHeight="48.0" text="Median" textFill="#003f5c">
-                                 <font>
-                                    <Font name="System Bold" size="18.0" />
-                                 </font>
-                              </Label>
-                              <Label fx:id="medianLabel" alignment="CENTER" maxWidth="1.7976931348623157E308" prefHeight="48.0" text="Median (Result)" textFill="#ff6361">
-                                 <font>
-                                    <Font name="Consolas" size="18.0" />
-                                 </font>
-                              </Label>
-                              <Label alignment="CENTER" maxWidth="1.7976931348623157E308" prefHeight="48.0" text="Mode" textFill="#003f5c">
-                                 <font>
-                                    <Font name="System Bold" size="18.0" />
-                                 </font>
-                              </Label>
-                              <Label fx:id="modeLabel" alignment="CENTER" maxWidth="1.7976931348623157E308" prefHeight="48.0" text="Mode (Result)" textFill="#ff6361">
-                                 <font>
-                                    <Font name="Consolas" size="18.0" />
-                                 </font>
-                              </Label>
+                              <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" VBox.vgrow="ALWAYS">
+                                 <children>
+                                    <Label alignment="CENTER" maxWidth="1.7976931348623157E308" prefHeight="48.0" text="Mean" textFill="#003f5c">
+                                       <font>
+                                          <Font name="System Bold" size="18.0" />
+                                       </font>
+                                    </Label>
+                                    <Label fx:id="meanLabel" alignment="CENTER" maxWidth="1.7976931348623157E308" prefHeight="48.0" text="Mean (Result)" textFill="#ff6361">
+                                       <font>
+                                          <Font name="System Italic" size="18.0" />
+                                       </font>
+                                    </Label>
+                                    <Label alignment="CENTER" maxWidth="1.7976931348623157E308" prefHeight="48.0" text="Median" textFill="#003f5c">
+                                       <font>
+                                          <Font name="System Bold" size="18.0" />
+                                       </font>
+                                    </Label>
+                                    <Label fx:id="medianLabel" alignment="CENTER" maxWidth="1.7976931348623157E308" prefHeight="48.0" text="Median (Result)" textFill="#ff6361">
+                                       <font>
+                                          <Font name="System Italic" size="18.0" />
+                                       </font>
+                                    </Label>
+                                    <Label alignment="CENTER" maxWidth="1.7976931348623157E308" prefHeight="48.0" text="Mode" textFill="#003f5c">
+                                       <font>
+                                          <Font name="System Bold" size="18.0" />
+                                       </font>
+                                    </Label>
+                                    <Label fx:id="modeLabel" alignment="CENTER" maxWidth="1.7976931348623157E308" prefHeight="48.0" text="Mode (Result)" textFill="#ff6361">
+                                       <font>
+                                          <Font name="System Italic" size="18.0" />
+                                       </font>
+                                    </Label>
+                                 </children>
+                              </VBox>
+                           </children>
+                        </VBox>
+                        <VBox maxHeight="1.7976931348623157E308" prefHeight="48.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
+                           <children>
+                              <HBox prefHeight="64.0" prefWidth="200.0" spacing="8.0">
+                                 <children>
+                                    <Label id="menu-label" fx:id="valuesTAB" alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Values distribution" HBox.hgrow="ALWAYS">
+                                       <font>
+                                          <Font name="System Bold" size="18.0" />
+                                       </font>
+                                       <cursor>
+                                          <Cursor fx:constant="HAND" />
+                                       </cursor>
+                                    </Label>
+                                    <Label id="menu-label" fx:id="histogramTAB" alignment="CENTER" layoutX="10.0" layoutY="10.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Histogram" HBox.hgrow="ALWAYS">
+                                       <font>
+                                          <Font name="System Bold" size="18.0" />
+                                       </font>
+                                       <cursor>
+                                          <Cursor fx:constant="HAND" />
+                                       </cursor>
+                                    </Label>
+                                    <Label id="menu-label" fx:id="scatterTAB" alignment="CENTER" layoutX="10.0" layoutY="10.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Scatter plot" HBox.hgrow="ALWAYS">
+                                       <font>
+                                          <Font name="System Bold" size="18.0" />
+                                       </font>
+                                       <cursor>
+                                          <Cursor fx:constant="HAND" />
+                                       </cursor>
+                                    </Label>
+                                 </children>
+                              </HBox>
+                              <AnchorPane maxWidth="1.7976931348623157E308" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: white;" VBox.vgrow="ALWAYS">
+                                 <effect>
+                                    <DropShadow color="#000000b2" height="16.0" radius="7.5" width="16.0" />
+                                 </effect>
+                                 <children>
+                                    <AnchorPane fx:id="valuesAP" layoutX="-54.0" layoutY="113.0" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: white;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                       <children>
+                                          <LineChart fx:id="valuesLC" prefHeight="419.0" prefWidth="712.0" AnchorPane.bottomAnchor="16.0" AnchorPane.leftAnchor="8.0" AnchorPane.rightAnchor="8.0" AnchorPane.topAnchor="16.0">
+                                            <xAxis>
+                                              <CategoryAxis side="BOTTOM" />
+                                            </xAxis>
+                                            <yAxis>
+                                              <NumberAxis side="LEFT" />
+                                            </yAxis>
+                                          </LineChart>
+                                       </children>
+                                    </AnchorPane>
+                                    <AnchorPane fx:id="histoAP" layoutX="10.0" layoutY="10.0" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: white;" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                       <children>
+                                          <BarChart fx:id="valuesBC" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                            <xAxis>
+                                              <CategoryAxis side="BOTTOM" />
+                                            </xAxis>
+                                            <yAxis>
+                                              <NumberAxis side="LEFT" />
+                                            </yAxis>
+                                          </BarChart>
+                                       </children>
+                                    </AnchorPane>
+                                    <AnchorPane fx:id="scatterAP" layoutX="10.0" layoutY="10.0" maxHeight="1.7976931348623157E308" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: white;" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                       <children>
+                                          <ScatterChart fx:id="valuesSC" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="64.0">
+                                            <xAxis>
+                                              <CategoryAxis side="BOTTOM" />
+                                            </xAxis>
+                                            <yAxis>
+                                              <NumberAxis side="LEFT" />
+                                            </yAxis>
+                                          </ScatterChart>
+                                          <HBox alignment="CENTER" layoutX="-14.0" layoutY="14.0" maxWidth="1.7976931348623157E308" prefHeight="83.0" prefWidth="728.0" spacing="16.0" AnchorPane.leftAnchor="8.0" AnchorPane.rightAnchor="8.0" AnchorPane.topAnchor="0.0">
+                                             <children>
+                                                <Label alignment="CENTER" maxWidth="1.7976931348623157E308" prefHeight="42.0" text="Y values" HBox.hgrow="ALWAYS">
+                                                   <font>
+                                                      <Font name="System Bold" size="18.0" />
+                                                   </font>
+                                                </Label>
+                                                <ChoiceBox fx:id="yAttrCB" maxWidth="1.7976931348623157E308" prefHeight="42.0" prefWidth="256.0" HBox.hgrow="ALWAYS">
+                                                   <effect>
+                                                      <DropShadow color="#000000b2" height="8.0" radius="3.5" width="8.0" />
+                                                   </effect>
+                                                   <cursor>
+                                                      <Cursor fx:constant="HAND" />
+                                                   </cursor>
+                                                </ChoiceBox>
+                                             </children>
+                                          </HBox>
+                                       </children>
+                                    </AnchorPane>
+                                 </children>
+                              </AnchorPane>
                            </children>
                         </VBox>
                      </children>
-                  </VBox>
-                  <VBox prefHeight="48.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
-                     <children>
-                        <HBox prefHeight="64.0" prefWidth="200.0" spacing="8.0">
-                           <children>
-                              <Label id="menu-label" alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Values distribution" HBox.hgrow="ALWAYS">
-                                 <font>
-                                    <Font name="System Bold" size="18.0" />
-                                 </font>
-                                 <cursor>
-                                    <Cursor fx:constant="HAND" />
-                                 </cursor>
-                              </Label>
-                              <Label id="menu-label" alignment="CENTER" layoutX="10.0" layoutY="10.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Label" HBox.hgrow="ALWAYS">
-                                 <font>
-                                    <Font name="System Bold" size="18.0" />
-                                 </font>
-                                 <cursor>
-                                    <Cursor fx:constant="HAND" />
-                                 </cursor>
-                              </Label>
-                              <Label id="menu-label" alignment="CENTER" layoutX="10.0" layoutY="10.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Label" HBox.hgrow="ALWAYS">
-                                 <font>
-                                    <Font name="System Bold" size="18.0" />
-                                 </font>
-                                 <cursor>
-                                    <Cursor fx:constant="HAND" />
-                                 </cursor>
-                              </Label>
-                           </children>
-                        </HBox>
-                        <AnchorPane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: white;" VBox.vgrow="ALWAYS">
-                           <effect>
-                              <DropShadow color="#000000b2" height="16.0" radius="7.5" width="16.0" />
-                           </effect>
-                           <children>
-                              <AnchorPane fx:id="valuesAP" layoutX="-54.0" layoutY="113.0" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: white;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                              <AnchorPane layoutX="10.0" layoutY="10.0" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: white;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                              <AnchorPane layoutX="10.0" layoutY="10.0" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: white;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                 <children>
-                                    <LineChart fx:id="valuesLC" layoutX="114.0" layoutY="21.0" prefHeight="419.0" prefWidth="712.0" AnchorPane.bottomAnchor="16.0" AnchorPane.leftAnchor="8.0" AnchorPane.rightAnchor="8.0" AnchorPane.topAnchor="16.0">
-                                      <xAxis>
-                                        <CategoryAxis side="BOTTOM" />
-                                      </xAxis>
-                                      <yAxis>
-                                        <NumberAxis side="LEFT" />
-                                      </yAxis>
-                                    </LineChart>
-                                 </children></AnchorPane>
-                           </children>
-                        </AnchorPane>
-                     </children>
-                  </VBox>
+                  </HBox>
                </children>
-            </HBox>
+            </VBox>
          </children>
       </VBox>
    </children>
