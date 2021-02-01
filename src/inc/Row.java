@@ -143,4 +143,37 @@ public class Row{
         }
     }
 
+    public boolean satisfies(String[] strings) {
+
+        int cpt = 0;
+
+        for(String string : strings){
+            if(string.equals(String.valueOf(attributeClass))){
+                cpt++;
+                continue;
+            }
+            if(string.equals(String.valueOf(t3ResinUptakeTest))){
+                cpt++;
+                continue;
+            }
+            if(string.equals(String.valueOf(serumThyroxin))){
+                cpt++;
+                continue;
+            }
+            if(string.equals(String.valueOf(serumTriiodothyronine))){
+                cpt++;
+                continue;
+            }
+            if(string.equals(String.valueOf(tsh))){
+                cpt++;
+                continue;
+            }
+            if(string.equals(String.valueOf(newTsh))){
+                cpt++;
+                continue;
+            }
+        }
+
+        return cpt == strings.length;
+    }
 }
