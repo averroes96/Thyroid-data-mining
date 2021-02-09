@@ -1,5 +1,7 @@
 package inc;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 
 // This class represent one single row(line) of the dataset
@@ -116,6 +118,26 @@ public class Row{
         }
     }
 
+    public void set(int attrPosition, double value){
+
+        switch (attrPosition){
+            case 0:
+                attributeClass = (int)value;
+            case 1:
+                t3ResinUptakeTest = (int)value;
+            case 2:
+                serumThyroxin = value;
+            case 3:
+                serumTriiodothyronine = value;
+            case 4:
+                tsh = value;
+            case 5:
+                newTsh = value;
+            default:
+                throw new ArrayIndexOutOfBoundsException("Index out of range");
+        }
+    }
+
     // Method to get attribute value by position
     public void setValueByPosition(int attrPosition, double value){
 
@@ -143,37 +165,35 @@ public class Row{
         }
     }
 
-    public boolean satisfies(String[] strings) {
+    public boolean satisfies(String candidate) {
 
         int cpt = 0;
+        int stringLength = candidate.split(",").length;
 
-        for(String string : strings){
-            if(string.equals(String.valueOf(attributeClass))){
+
+        String[] strs = candidate.split(",");
+        for(String str : strs){
+            if(getAllValues().contains(str))
                 cpt++;
-                continue;
-            }
-            if(string.equals(String.valueOf(t3ResinUptakeTest))){
-                cpt++;
-                continue;
-            }
-            if(string.equals(String.valueOf(serumThyroxin))){
-                cpt++;
-                continue;
-            }
-            if(string.equals(String.valueOf(serumTriiodothyronine))){
-                cpt++;
-                continue;
-            }
-            if(string.equals(String.valueOf(tsh))){
-                cpt++;
-                continue;
-            }
-            if(string.equals(String.valueOf(newTsh))){
-                cpt++;
-                continue;
-            }
         }
+        if(cpt == stringLength) {
+            System.out.println(cpt);
+            System.out.println(stringLength);
+        }
+        return cpt == stringLength;
+    }
 
-        return cpt == strings.length;
+    public ArrayList<String> getAllValues(){
+
+        ArrayList<String> temp = new ArrayList<>();
+
+        temp.add("A" + attributeClass);
+        temp.add("B" + t3ResinUptakeTest);
+        temp.add("C" + serumThyroxin);
+        temp.add("D" + serumTriiodothyronine);
+        temp.add("E" + tsh);
+        temp.add("F" + newTsh);
+
+        return temp;
     }
 }

@@ -1,13 +1,11 @@
 package app;
 
+import algos.Apriori;
 import animatefx.animation.ZoomIn;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXDialog;
 import com.jfoenix.controls.JFXScrollPane;
-import inc.Common;
-import inc.DataSet;
-import inc.Parser;
-import inc.Row;
+import inc.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -15,7 +13,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.chart.*;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -24,6 +21,7 @@ import javafx.scene.layout.StackPane;
 
 import java.io.*;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.ResourceBundle;
 
 public class Controller implements Initializable {
@@ -96,21 +94,13 @@ public class Controller implements Initializable {
             initScatterChart();
         });
 
-        valuesTAB.setOnMouseClicked(action -> {
-            selectTab(action);
-        });
+        valuesTAB.setOnMouseClicked(this::selectTab);
 
-        histogramTAB.setOnMouseClicked(action -> {
-            selectTab(action);
-        });
+        histogramTAB.setOnMouseClicked(this::selectTab);
 
-        scatterTAB.setOnMouseClicked(action -> {
-            selectTab(action);
-        });
+        scatterTAB.setOnMouseClicked(this::selectTab);
 
-        boxPlotTAB.setOnMouseClicked(action -> {
-            selectTab(action);
-        });
+        boxPlotTAB.setOnMouseClicked(this::selectTab);
 
         informationIV.setOnMouseClicked(action -> {
             InputStream in = getClass().getResourceAsStream("/ds/Thyroid_Dataset_Information.txt");
@@ -144,6 +134,21 @@ public class Controller implements Initializable {
             scrollPane.setVisible(true);
             scrollPane.setContent(stackPane);
         });
+
+        Apriori apriori = new Apriori();
+        HashMap<String, Integer> candidates = new HashMap<>();
+        for (Row row : dataSet.getRows()){
+            for(String val : row.getAllValues()){
+                if(!candidates.containsKey(String.valueOf(val)))
+                    candidates.put(val, 1);
+                else
+                    candidates.put(val, candidates.get(String.valueOf(val)) + 1);
+            }
+        }
+        apriori.setCandidateItems(candidates);
+        apriori.setMinSup(3);
+        apriori.setDataSet(dataSet);
+        apriori.run();
 
     }
 
