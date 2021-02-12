@@ -5,8 +5,6 @@
       <element id="module-output" name="Thyroid" />
       <element id="extracted-dir" path="$PROJECT_DIR$/lib/AnimateFX-1.2.1.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$PROJECT_DIR$/lib/jfoenix-8.0.8.jar" path-in-jar="/" />
-      <element id="extracted-dir" path="$PROJECT_DIR$/lib/jfreechart-1.5.2.jar" path-in-jar="/" />
-      <element id="extracted-dir" path="$PROJECT_DIR$/lib/org.jfree.chart.fx-2.0.jar" path-in-jar="/" />
     </root>
   </artifact>
 </component>

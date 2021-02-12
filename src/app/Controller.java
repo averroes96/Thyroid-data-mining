@@ -20,6 +20,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 
+import javax.xml.crypto.Data;
 import java.io.*;
 import java.net.URL;
 import java.util.HashMap;
@@ -64,13 +65,15 @@ public class Controller implements Initializable,Init {
     private ChoiceBox<String> attributeCB,yAttrCB;
 
     private DataSet dataSet = new DataSet();
+    private DataSet discretData = new DataSet();
     private ObservableList<String> attributesList = FXCollections.observableArrayList();
     private int currPostion = 0;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
-        getDataSet();
+        getDataSet(dataSet);
+        getDataSet(discretData);
 
         attributesList.addAll("Class attribute",
                 "T3-resin uptake test",
@@ -140,7 +143,7 @@ public class Controller implements Initializable,Init {
         /*
         for(double val : Common.heapSort(dataSet.normalizedData())){
             System.out.println(val);
-        }*/
+        }
 
 
         KMeans thyroidKMeans = new KMeans();
@@ -151,7 +154,20 @@ public class Controller implements Initializable,Init {
         thyroidKMeans.setDistance(EUCLEDIAN);
         thyroidKMeans.initiateCentroids();
         thyroidKMeans.run();
-        thyroidKMeans.display();
+        thyroidKMeans.display();*/
+
+        /*
+        discretData.discretize(2, 5);
+
+        System.out.println("Cloned:\n\n");
+        for(Row row : discretData.getRows()){
+            System.out.println(row.getValueByPosition(2));
+        }
+
+        System.out.println("Original:\n\n");
+        for(Row row : dataSet.getRows()){
+            System.out.println(row.getValueByPosition(2));
+        }*/
 
     }
 
@@ -274,10 +290,11 @@ public class Controller implements Initializable,Init {
         }
     }
 
-    private void getDataSet() {
+    private void getDataSet(DataSet ds) {
+
         Parser parser = new Parser();
         try {
-            dataSet.setRows(parser.getRows("/ds/Thyroid_Dataset.txt"));
+            ds.setRows(parser.getRows("/ds/Thyroid_Dataset.txt"));
         } catch (IOException e) {
             e.printStackTrace();
         }

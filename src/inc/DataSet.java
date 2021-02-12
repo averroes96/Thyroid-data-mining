@@ -5,10 +5,11 @@ import javafx.collections.ObservableList;
 import javafx.scene.chart.XYChart;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 // This class is the general concept of our entire dataset
 
-public class DataSet implements Init {
+public class DataSet implements Init,Cloneable {
 
     // rows is the list that contains the dataset's entire rows
     private ObservableList<Row> rows = FXCollections.observableArrayList();
@@ -300,9 +301,9 @@ public class DataSet implements Init {
     }
 
 
-    private ArrayList<Double> getValuesByPosition(int currPostion) {
+    public ObservableList<Double> getValuesByPosition(int currPostion) {
 
-        ArrayList<Double> values = new ArrayList<>();
+        ObservableList<Double> values = FXCollections.observableArrayList();
 
         for(Row row : rows)
             values.add(row.getValueByPosition(currPostion));
@@ -340,5 +341,98 @@ public class DataSet implements Init {
 
     }
 
+    public void discretize(int pos, int binSize){
 
+        ObservableList<Double> values = Common.heapSort(getValuesByPosition(pos));
+
+        HashMap<Integer, ArrayList<Double>> bins;
+        ObservableList<Double> discretedData = FXCollections.observableArrayList();
+
+        bins = equalFrequencyPartition(values, binSize);
+
+        /*
+        System.out.println("Before Smothing");
+
+        for(Integer bin : bins.keySet()){
+            System.out.println(bin + ":");
+            for(Double val : bins.get(bin)){
+                System.out.println(val);
+            }
+        }*/
+
+        smoothingByBounderies(bins);
+
+        /*
+        System.out.println("After Smothing");
+
+        for(Integer bin : bins.keySet()){
+            System.out.println(bin + ":");
+            for(Double val : bins.get(bin)){
+                System.out.println(val);
+            }
+        }*/
+
+        for(Integer bin : bins.keySet()){
+            discretedData.addAll(bins.get(bin));
+        }
+
+        for(int i = 0; i < getRows().size(); i++) {
+            getRows().get(i).set(pos, discretedData.get(i));
+        }
+
+        /*
+        for (Double val : discretedData){
+            System.out.print(val + " ");
+        }*/
+
+    }
+
+    private void smoothingByBounderies(HashMap<Integer, ArrayList<Double>> bins) {
+
+        for(Integer bin : bins.keySet()){
+            for(int i = 0; i < bins.get(bin).size(); i++){
+                double minVal = bins.get(bin).get(i) - bins.get(bin).get(0);
+                double maxVal = bins.get(bin).get(bins.get(bin).size() - 1) - bins.get(bin).get(i);
+                //System.out.println("Min= " + minVal);
+                //System.out.println("Max= " + maxVal);
+                if(minVal <= maxVal){
+                    bins.get(bin).set(i, bins.get(bin).get(0));
+                }
+                else
+                    bins.get(bin).set(i, bins.get(bin).get(bins.get(bin).size() - 1));
+            }
+        }
+
+    }
+
+    private HashMap<Integer, ArrayList<Double>> equalFrequencyPartition(ObservableList<Double> values, int binSize) {
+
+        HashMap<Integer, ArrayList<Double>> temp = new HashMap<>();
+        ArrayList<Double> tempList = new ArrayList<>();
+        int cpt = 0;
+
+        for(int i = 1; i <= values.size(); i++){
+
+            tempList.add(values.get(i-1));
+
+            if( i % binSize == 0 || i == values.size()){
+                temp.put(cpt, tempList);
+                cpt++;
+                tempList = new ArrayList<>();
+            }
+        }
+
+        return temp;
+    }
+
+    @Override
+    public DataSet clone() throws CloneNotSupportedException{
+
+        DataSet ds = (DataSet)super.clone();
+        ds.rows = FXCollections.observableArrayList();
+
+        ds.rows.addAll(this.rows);
+
+        return ds;
+    }
 }
