@@ -20,10 +20,10 @@ public class Row{
     public Row() {
         attributeClass = 0;
         t3ResinUptakeTest = 0;
-        serumThyroxin = 0;
-        serumTriiodothyronine = 0;
-        tsh = 0;
-        newTsh = 0;
+        serumThyroxin = 0.0;
+        serumTriiodothyronine = 0.0;
+        tsh = 0.0;
+        newTsh = 0.0;
     }
 
     public Row(int attributeClass, int t3ResinUptakeTest, double serumThyroxin, double serumTriiodothyronine, double tsh, double newTsh) {
@@ -123,16 +123,22 @@ public class Row{
         switch (attrPosition){
             case 0:
                 attributeClass = (int)value;
+                break;
             case 1:
                 t3ResinUptakeTest = (int)value;
+                break;
             case 2:
                 serumThyroxin = value;
+                break;
             case 3:
                 serumTriiodothyronine = value;
+                break;
             case 4:
                 tsh = value;
+                break;
             case 5:
                 newTsh = value;
+                break;
             default:
                 throw new ArrayIndexOutOfBoundsException("Index out of range");
         }

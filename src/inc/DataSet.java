@@ -4,11 +4,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.chart.XYChart;
 
-import java.awt.*;
-import java.text.DecimalFormat;
-import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Date;
 
 // This class is the general concept of our entire dataset
 
@@ -312,6 +308,35 @@ public class DataSet implements Init {
             values.add(row.getValueByPosition(currPostion));
 
         return values;
+
+    }
+
+    public ObservableList<Double> normalizedData(){
+
+        ObservableList<Double> temp = FXCollections.observableArrayList();
+        int count = 0;
+        double sum = 0.0;
+
+        for(Row row : getRows()){
+            for (int i = 0; i < 6; i++){
+                count++;
+                //System.out.println(getNormalizedValue(row.getValueByPosition(i), i));
+                sum = sum + getNormalizedValue(row.getValueByPosition(i), i);
+            }
+            System.out.println(sum/count);
+            temp.add(sum/count);
+        }
+
+        return temp;
+
+    }
+
+    public double getNormalizedValue(double val, int pos){
+
+        System.out.println(getArrtibuteMax(pos));
+        System.out.println(getArrtibuteMin(pos));
+
+        return ((val - getArrtibuteMin(pos)) / (getArrtibuteMax(pos) - getArrtibuteMin(pos)));
 
     }
 

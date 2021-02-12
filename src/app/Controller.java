@@ -1,6 +1,7 @@
 package app;
 
 import algos.Apriori;
+import algos.KMeans;
 import animatefx.animation.ZoomIn;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXDialog;
@@ -24,13 +25,13 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.ResourceBundle;
 
-public class Controller implements Initializable {
+public class Controller implements Initializable,Init {
 
     @FXML
     private ImageView informationIV,boxPlotIV;
 
     @FXML
-    private JFXButton displayBtn;
+    private JFXButton displayBtn,kmeansBtn;
 
     @FXML
     private AnchorPane valuesAP,histoAP,scatterAP,boxPlotAP;
@@ -135,20 +136,22 @@ public class Controller implements Initializable {
             scrollPane.setContent(stackPane);
         });
 
-        Apriori apriori = new Apriori();
-        HashMap<String, Integer> candidates = new HashMap<>();
-        for (Row row : dataSet.getRows()){
-            for(String val : row.getAllValues()){
-                if(!candidates.containsKey(String.valueOf(val)))
-                    candidates.put(val, 1);
-                else
-                    candidates.put(val, candidates.get(String.valueOf(val)) + 1);
-            }
-        }
-        apriori.setCandidateItems(candidates);
-        apriori.setMinSup(3);
-        apriori.setDataSet(dataSet);
-        apriori.run();
+
+        /*
+        for(double val : Common.heapSort(dataSet.normalizedData())){
+            System.out.println(val);
+        }*/
+
+
+        KMeans thyroidKMeans = new KMeans();
+        thyroidKMeans.setDataSet(dataSet);
+        thyroidKMeans.setK(5);
+        thyroidKMeans.setMaxIters(100);
+        thyroidKMeans.setNumFeatures(6);
+        thyroidKMeans.setDistance(EUCLEDIAN);
+        thyroidKMeans.initiateCentroids();
+        thyroidKMeans.run();
+        thyroidKMeans.display();
 
     }
 
