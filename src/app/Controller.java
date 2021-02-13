@@ -139,6 +139,26 @@ public class Controller implements Initializable,Init {
             scrollPane.setContent(stackPane);
         });
 
+        discretData.discretize(1, 4);
+
+
+        Apriori apriori = new Apriori();
+        apriori.setDataSet(discretData);
+        apriori.setMinSup(4);
+        HashMap<String, Integer> candidates = new HashMap<>();
+        for (Row row : discretData.getRows()){
+
+            for(String str : row.getAllValues()){
+                if(!candidates.containsKey(str)){
+                    candidates.put(str, 1);
+                }
+                else
+                    candidates.put(str, candidates.get(str) + 1);
+            }
+        }
+        apriori.setCandidateItems(candidates);
+        apriori.run();
+
 
         /*
         for(double val : Common.heapSort(dataSet.normalizedData())){

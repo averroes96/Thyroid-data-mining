@@ -12,7 +12,7 @@ public class Apriori {
     private DataSet dataSet;
 
     public Apriori() {
-        minSup = 0;
+        minSup = 1;
         candidateItems = new HashMap<>();
         frequentItems = new HashMap<>();
         dataSet = new DataSet();
@@ -54,6 +54,12 @@ public class Apriori {
     public void run(){
 
         System.out.println("Candidates size : " + candidateItems.size());
+        int sum = 0;
+        for(String str : candidateItems.keySet()){
+            sum += candidateItems.get(str);
+        }
+
+        System.out.println(sum/candidateItems.size());
 
         getFrequents();
 
@@ -85,6 +91,8 @@ public class Apriori {
                                     cpt++;
                                 }
                         }
+                        if(isCandidate(cpt))
+                            System.out.println(candidate + " => " + cpt);
                         candidateItems.put(candidate, cpt);
                     }
                 }
@@ -115,11 +123,12 @@ public class Apriori {
         for(String str : key2){
             if(!key1.contains(str)){
                 String tempStr = key1.toString().replace("[","").replace("]","").trim();
-                if(!temp.contains(str + "," + tempStr) && (str + "," + tempStr).split(",").length == itemsetSize)
+                if(!temp.contains(str + "," + tempStr) && (str + "," + tempStr).split(",").length == itemsetSize && !tempStr.contains(String.valueOf(str.charAt(0))))
                     temp.add(tempStr + "," + str);
             }
         }
     }
+
 
     private void getFrequents() {
 

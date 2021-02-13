@@ -167,7 +167,6 @@ public class Row{
                 newTsh = value;
                 break;
             default:
-                return;
         }
     }
 
@@ -179,12 +178,8 @@ public class Row{
 
         String[] strs = candidate.split(",");
         for(String str : strs){
-            if(getAllValues().contains(str))
+            if(getAllValues().contains(str.trim()))
                 cpt++;
-        }
-        if(cpt == stringLength) {
-            System.out.println(cpt);
-            System.out.println(stringLength);
         }
         return cpt == stringLength;
     }

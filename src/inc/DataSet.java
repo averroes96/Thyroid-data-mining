@@ -377,8 +377,47 @@ public class DataSet implements Init,Cloneable {
         }
 
         for(int i = 0; i < getRows().size(); i++) {
-            getRows().get(i).set(pos, discretedData.get(i));
+            if(!discretedData.contains(getRows().get(i).getValueByPosition(pos))){
+                int cpt = 0;
+                while(discretedData.get(cpt) < getRows().get(i).getValueByPosition(pos) && cpt < discretedData.size()){
+                    cpt++;
+                }
+
+                if(cpt == 0)
+                    getRows().get(i).set(pos, discretedData.get(0));
+                else if(cpt == discretedData.size())
+                    getRows().get(i).set(pos, discretedData.get(discretedData.size() - 1));
+                else{
+                    double minVal = getRows().get(i).getValueByPosition(pos) - discretedData.get(cpt - 1);
+                    double maxVal = discretedData.get(cpt) - getRows().get(i).getValueByPosition(pos);
+                    //System.out.println("Min= " + minVal);
+                    //System.out.println("Max= " + maxVal);
+                    if(minVal <= maxVal){
+                        getRows().get(i).set(pos, discretedData.get(cpt - 1));
+                    }
+                    else
+                        getRows().get(i).set(pos, discretedData.get(cpt));
+                }
+            }
         }
+
+        /*
+        ArrayList<Double> tempRows = new ArrayList<>();
+        ArrayList<Double> tempDisc = new ArrayList<>();
+        for (Double val : getValuesByPosition(pos)) {
+            if(!tempRows.contains(val)){
+                tempRows.add(val);
+            }
+        }
+
+        for (Double val : discretedData) {
+            if(!tempDisc.contains(val)){
+                tempDisc.add(val);
+            }
+        }
+
+        System.out.println(tempRows.size());
+        System.out.println(tempDisc.size());*/
 
         /*
         for (Double val : discretedData){
@@ -390,6 +429,7 @@ public class DataSet implements Init,Cloneable {
     private void smoothingByBounderies(HashMap<Integer, ArrayList<Double>> bins) {
 
         for(Integer bin : bins.keySet()){
+
             for(int i = 0; i < bins.get(bin).size(); i++){
                 double minVal = bins.get(bin).get(i) - bins.get(bin).get(0);
                 double maxVal = bins.get(bin).get(bins.get(bin).size() - 1) - bins.get(bin).get(i);
