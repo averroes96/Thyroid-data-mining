@@ -139,6 +139,17 @@ public class Controller implements Initializable,Init {
             scrollPane.setContent(stackPane);
         });
 
+        dataSet.discretize(0, 4);
+        dataSet.discretize(1, 4);
+        dataSet.discretize(2, 4);
+        dataSet.discretize(3, 4);
+        dataSet.discretize(4, 4);
+        dataSet.discretize(5, 4);
+
+        dataSet.IQR();
+
+        /*
+
         discretData.discretize(1, 4);
 
 
@@ -157,7 +168,7 @@ public class Controller implements Initializable,Init {
             }
         }
         apriori.setCandidateItems(candidates);
-        apriori.run();
+        apriori.run();*/
 
 
         /*
@@ -168,13 +179,13 @@ public class Controller implements Initializable,Init {
 
         KMeans thyroidKMeans = new KMeans();
         thyroidKMeans.setDataSet(dataSet);
-        thyroidKMeans.setK(5);
+        thyroidKMeans.setK(3);
         thyroidKMeans.setMaxIters(100);
         thyroidKMeans.setNumFeatures(6);
         thyroidKMeans.setDistance(EUCLEDIAN);
         thyroidKMeans.initiateCentroids();
         thyroidKMeans.run();
-        thyroidKMeans.display();*/
+        thyroidKMeans.display();
 
         /*
         discretData.discretize(2, 5);

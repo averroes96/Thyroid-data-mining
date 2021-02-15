@@ -324,7 +324,7 @@ public class DataSet implements Init,Cloneable {
                 //System.out.println(getNormalizedValue(row.getValueByPosition(i), i));
                 sum = sum + getNormalizedValue(row.getValueByPosition(i), i);
             }
-            System.out.println(sum/count);
+            //System.out.println(sum/count);
             temp.add(sum/count);
         }
 
@@ -334,8 +334,8 @@ public class DataSet implements Init,Cloneable {
 
     public double getNormalizedValue(double val, int pos){
 
-        System.out.println(getArrtibuteMax(pos));
-        System.out.println(getArrtibuteMin(pos));
+        //System.out.println(getArrtibuteMax(pos));
+        //System.out.println(getArrtibuteMin(pos));
 
         return ((val - getArrtibuteMin(pos)) / (getArrtibuteMax(pos) - getArrtibuteMin(pos)));
 
@@ -463,6 +463,34 @@ public class DataSet implements Init,Cloneable {
         }
 
         return temp;
+    }
+
+    public void IQR(){
+
+        ObservableList<Double> temp = Common.heapSort(normalizedData());
+        ObservableList<Double> inliers = FXCollections.observableArrayList();
+
+        double median = 0.0;
+        double Q1Median = 0,Q3Median = 0;
+        boolean size = temp.size() % 2 == 0;
+        if(size) {
+            median = temp.get(temp.size() / 2);
+            calculateMedian(Q1Median, temp, 1);
+        }
+        else
+            median = (temp.get(temp.size() / 2) + temp.get((temp.size() + 1) / 2)) / 2;
+
+        for( int i = 0; i < temp.size(); i++){
+            if( i >= temp.size() * 0.25 && i <= temp.size() * 0.75)
+                inliers.add(temp.get(i));
+        }
+
+        System.out.println(temp.size() - inliers.size());
+
+    }
+
+    private void calculateMedian(double median, ObservableList<Double> temp, int Q) {
+
     }
 
     @Override
