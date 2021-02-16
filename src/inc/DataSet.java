@@ -322,7 +322,7 @@ public class DataSet implements Init,Cloneable {
             for (int i = 0; i < 6; i++){
                 count++;
                 //System.out.println(getNormalizedValue(row.getValueByPosition(i), i));
-                sum = sum + getNormalizedValue(row.getValueByPosition(i), i);
+                sum = sum + row.getValueByPosition(i);
             }
             //System.out.println(sum/count);
             temp.add(sum/count);
@@ -473,23 +473,70 @@ public class DataSet implements Init,Cloneable {
         double median = 0.0;
         double Q1Median = 0,Q3Median = 0;
         boolean size = temp.size() % 2 == 0;
+        Q1Median = calculateQMedians(Q1Median, Q3Median, temp)[0];
+        Q3Median = calculateQMedians(Q1Median, Q3Median, temp)[1];
+
+        System.out.println("MIN = " + Q1Median + " MAX = " + Q3Median);
         if(size) {
             median = temp.get(temp.size() / 2);
-            calculateMedian(Q1Median, temp, 1);
         }
         else
             median = (temp.get(temp.size() / 2) + temp.get((temp.size() + 1) / 2)) / 2;
 
-        for( int i = 0; i < temp.size(); i++){
-            if( i >= temp.size() * 0.25 && i <= temp.size() * 0.75)
-                inliers.add(temp.get(i));
+        int cpt = 1;
+        for(double val : temp){
+            System.out.println(cpt + " => " + val);
+            cpt++;
         }
-
-        System.out.println(temp.size() - inliers.size());
-
     }
 
-    private void calculateMedian(double median, ObservableList<Double> temp, int Q) {
+    private double[] calculateQMedians(double Q1, double Q3, ObservableList<Double> temp) {
+
+        int size = temp.size();
+        int half = size / 2;
+        ObservableList<Double> Q1List = FXCollections.observableArrayList();
+        ObservableList<Double> Q3List = FXCollections.observableArrayList();
+
+        if(size % 2 == 0){
+            if(half % 2 == 0) {
+                for (int i = 0; i < half; i++) {
+                    Q1List.add(temp.get(i));
+                }
+                for (int i = half + 1; i < temp.size(); i++) {
+                    Q3List.add(temp.get(i));
+                }
+            }
+            else{
+                System.out.println(half);
+                for (int i = 0; i < half - 1; i++) {
+                    Q1List.add(temp.get(i));
+                }
+                for (int i = half + 1; i <= temp.size() - 1 ; i++) {
+                    //System.out.println(i);
+                    Q3List.add(temp.get(i));
+                }
+            }
+        }
+        else{
+            for (int i = 0; i < half; i++) {
+                Q1List.add(temp.get(i));
+            }
+            for (int i = half + 1; i < temp.size(); i++) {
+                Q3List.add(temp.get(i));
+            }
+        }
+
+        if(Q1List.size() % 2 == 0)
+            Q1 = (Q1List.get(Q1List.size() / 2) + Q1List.get((Q1List.size() / 2) + 1)) / 2;
+        else
+            Q1 = Q1List.get(Q1List.size() / 2);
+
+        if(Q3List.size() % 2 == 0)
+            Q3 = (Q3List.get(Q3List.size() / 2) + Q3List.get((Q3List.size() / 2) + 1)) / 2;
+        else
+            Q3 = Q3List.get(Q3List.size() / 2);
+
+        return new double[]{Q1, Q3};
 
     }
 
