@@ -12,11 +12,12 @@ import java.util.HashMap;
 public class DataSet implements Init,Cloneable {
 
     // rows is the list that contains the dataset's entire rows
-    private ObservableList<Row> rows = FXCollections.observableArrayList();
+    private ObservableList<Row> rows;
 
     // Constructors
 
     public DataSet() {
+        rows = FXCollections.observableArrayList();
     }
 
     public DataSet(ObservableList<Row> rows) {
@@ -491,7 +492,7 @@ public class DataSet implements Init,Cloneable {
                 cpt++;
         }
 
-        System.out.println(cpt);
+        //System.out.println(cpt);
     }
 
     private double[] calculateQMedians(double Q1, double Q3, ObservableList<Double> temp) {
@@ -563,5 +564,60 @@ public class DataSet implements Init,Cloneable {
 
     public int size(){
         return rows.size();
+    }
+
+    public ObservableList<Row> kNearest(int k, Row row, int distance) {
+
+        HashMap<Row, Double> closest = new HashMap<>();
+        ObservableList<Row> temp = FXCollections.observableArrayList();
+        double max = 9999;
+        for (Row tmp : rows) {
+            double d = Distance.calculateDistance(distance, row, tmp, 6);
+            if ( d < max  && !row.equals(tmp)) {
+                closest.put(tmp, d);
+                if (closest.size() > k)
+                    max = removeFarthest(closest,distance);
+            }
+
+        }
+
+        temp.addAll(closest.keySet());
+
+        System.out.println(temp.size());
+        return temp ;
+    }
+
+    private double removeFarthest(HashMap<Row, Double> closest, int distance) {
+
+        Row tmp = null;// ; = vector.get(0);
+        double max = 0;
+        for (Row row : closest.keySet()) {
+            double d = closest.get(row);
+
+            if (max < d) {
+                max = d;
+                tmp = row;
+            }
+            // System.out.println("d="+d+"\t"+max);
+        }
+        closest.remove(tmp);
+
+        return max;
+    }
+
+    public Row average() {
+
+        Row tmpOut = new Row();
+
+        for (int i = 0; i < 6; i++) {
+            double sum=0;
+
+            for (int j = 0; j < this.size(); j++) {
+                sum += this.getRows().get(j).getValueByPosition(i);
+            }
+            tmpOut.set (i, sum / this.size());
+
+        }
+        return tmpOut;
     }
 }

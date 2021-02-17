@@ -2,6 +2,7 @@ package app;
 
 import algos.Apriori;
 import algos.KMeans;
+import algos.KMediods;
 import animatefx.animation.ZoomIn;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXDialog;
@@ -139,6 +140,7 @@ public class Controller implements Initializable,Init {
             scrollPane.setContent(stackPane);
         });
 
+        /*
         dataSet.discretize(0, 4);
         dataSet.discretize(1, 4);
         dataSet.discretize(2, 4);
@@ -146,7 +148,17 @@ public class Controller implements Initializable,Init {
         dataSet.discretize(4, 4);
         dataSet.discretize(5, 4);
 
-        dataSet.IQR();
+        dataSet.IQR();*/
+
+        KMediods thyroidKMediods = new KMediods();
+        DataSet[] clusters = thyroidKMediods.run(dataSet);
+        int k = 1;
+        for(DataSet ds : clusters){
+            System.out.println("Cluster = " + k + " Size = " + ds.size());
+            for(Row row : ds.getRows())
+                System.out.println(row);
+            k++;
+        }
 
         /*
 

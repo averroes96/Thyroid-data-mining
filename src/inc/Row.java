@@ -197,4 +197,31 @@ public class Row{
 
         return temp;
     }
+
+    public double getDissimilarity(Row row){
+
+        double sum = 0;
+
+        sum += Math.abs(this.attributeClass - row.attributeClass);
+        sum += Math.abs(this.t3ResinUptakeTest - row.t3ResinUptakeTest);
+        sum += Math.abs(this.serumThyroxin - row.serumThyroxin);
+        sum += Math.abs(this.serumTriiodothyronine - row.serumTriiodothyronine);
+        sum += Math.abs(this.tsh - row.tsh);
+        sum += Math.abs(this.newTsh - row.newTsh);
+
+        return sum;
+
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        Row temp = (Row)o;
+
+        return attributeClass == temp.attributeClass &&
+                t3ResinUptakeTest == temp.t3ResinUptakeTest &&
+                serumThyroxin == temp.serumThyroxin &&
+                serumTriiodothyronine == temp.serumTriiodothyronine &&
+                tsh == temp.tsh &&
+                newTsh == temp.newTsh;
+    }
 }
