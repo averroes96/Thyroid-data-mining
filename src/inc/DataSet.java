@@ -473,8 +473,9 @@ public class DataSet implements Init,Cloneable {
         double median = 0.0;
         double Q1Median = 0,Q3Median = 0;
         boolean size = temp.size() % 2 == 0;
-        Q1Median = calculateQMedians(Q1Median, Q3Median, temp)[0];
-        Q3Median = calculateQMedians(Q1Median, Q3Median, temp)[1];
+        double[] quantiles = calculateQMedians(Q1Median, Q3Median, temp);
+        Q1Median = quantiles[0];
+        Q3Median = quantiles[1];
 
         System.out.println("MIN = " + Q1Median + " MAX = " + Q3Median);
         if(size) {
@@ -483,11 +484,14 @@ public class DataSet implements Init,Cloneable {
         else
             median = (temp.get(temp.size() / 2) + temp.get((temp.size() + 1) / 2)) / 2;
 
-        int cpt = 1;
+        int cpt = 0;
+        double IQR = Q3Median - Q1Median;
         for(double val : temp){
-            System.out.println(cpt + " => " + val);
-            cpt++;
+            if(val >= Q1Median - 1.5*IQR && val <= Q3Median + 1.5*IQR)
+                cpt++;
         }
+
+        System.out.println(cpt);
     }
 
     private double[] calculateQMedians(double Q1, double Q3, ObservableList<Double> temp) {
@@ -536,6 +540,12 @@ public class DataSet implements Init,Cloneable {
         else
             Q3 = Q3List.get(Q3List.size() / 2);
 
+        int cpt = 0;
+        for(Double val : Q1List){
+            System.out.println("Q1 (" + cpt + ") => " + val);
+            cpt++;
+        }
+
         return new double[]{Q1, Q3};
 
     }
@@ -549,5 +559,9 @@ public class DataSet implements Init,Cloneable {
         ds.rows.addAll(this.rows);
 
         return ds;
+    }
+
+    public int size(){
+        return rows.size();
     }
 }
