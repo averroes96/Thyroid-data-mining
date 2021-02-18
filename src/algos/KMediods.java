@@ -18,6 +18,8 @@ public class KMediods implements Init {
     private int distance;
     private Random rand;
     private int maxIter;
+    private double currentCost = 0;
+    private double newCost = 0;
 
     public KMediods() {
         this(3, 100, EUCLEDIAN);
@@ -101,17 +103,41 @@ public class KMediods implements Init {
                 //System.out.println("Mediod " + i + " changed");
                 changed = true;
             } else {
-                Row centroid = output[i].average();
                 Row oldMedoid = medoids.get(i);
-                medoids.set(i, dataSet.kNearest(1, centroid, distance).iterator().next());
-                if (!medoids.get(i).equals(oldMedoid)) {
+                Row centroid = dataSet.kNearest(1, oldMedoid, distance).iterator().next();
+
+                medoids.set(i, centroid);
+                calculaNewCost(dataSet, medoids);
+
+                if(currentCost <= newCost)
+                    medoids.set(i, oldMedoid);
+                else
                     changed = true;
-                    //System.out.println("Mediod " + i + " changed");
-                }
             }
         }
         return changed;
     }
+
+    private void calculaNewCost(DataSet dataSet, ObservableList<Row> medoids) {
+
+        for (int i = 0; i < dataSet.getRows().size(); i++) {
+            //double bestDistance = Distance.calculateDistance(distance, dataSet.getRows().get(i), medoids.get(0), 6);
+            double bestDistance = medoids.get(0).getDissimilarity(dataSet.getRows().get(i));
+            //System.out.println("Distance from 0 = " + bestDistance);
+            for (int j = 1; j < medoids.size(); j++) {
+
+                double tmpDistance = medoids.get(j).getDissimilarity(dataSet.getRows().get(i));
+                //System.out.println("Distance from " + j + " = " + tmpDistance);
+                if (tmpDistance < bestDistance) {
+                    bestDistance = tmpDistance;
+                }
+            }
+            newCost += bestDistance;
+
+        }
+        System.out.println(newCost);
+    }
+
 
     private int[] assign(ObservableList<Row> medoids, DataSet dataSet) {
 
@@ -131,9 +157,11 @@ public class KMediods implements Init {
 
                 }
             }
+            currentCost += bestDistance;
             out[i] = bestIndex;
 
         }
+        System.out.println(currentCost);
         return out;
     }
 }

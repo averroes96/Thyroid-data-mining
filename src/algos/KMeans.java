@@ -157,11 +157,8 @@ public class KMeans implements Init {
     public void display(){
 
         System.out.println("\nFinal Clustering of Data");
-        System.out.println("Feature1\tFeature2\tFeature3\tFeature4\tFeature5\tFeature6\tCluster");
         for (Row row : clusters.keySet()) {
-            for (int i = 0; i < numFeatures; i++) {
-                System.out.print(row.getValueByPosition(i) + "\t \t");
-            }
+            System.out.print(row.getValueByPosition(0) + "\t \t");
             System.out.print(clusters.get(row) + "\n");
         }
 
