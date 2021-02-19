@@ -8,6 +8,7 @@ import com.jfoenix.controls.JFXTextField;
 import com.jfoenix.controls.JFXToggleButton;
 import inc.DataSet;
 import inc.Init;
+import inc.Row;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -44,6 +45,7 @@ public class ClusterController implements Initializable, Init {
     
     String selectedAlgo = "kmeans";
     DataSet dataSet;
+    ObservableList<Row> originalRows = FXCollections.observableArrayList();
 
     public DataSet getDataSet() {
         return dataSet;
@@ -150,6 +152,13 @@ public class ClusterController implements Initializable, Init {
         int maxIters = maxItersKmeans.getText().trim().isEmpty() ? 100 : Integer.parseInt(maxItersKmeans.getText());
         int distance = distanceKmeans.getValue().equals("EUCLIDEAN") ? EUCLEDIAN : MANHATTAN ;
 
+        if(outliers.isSelected())
+            dataSet.setRows(dataSet.IQR());
+        else
+            dataSet.setRows(originalRows);
+
+        System.out.println(dataSet.size());
+
         // Running KMeans
         KMeans thyroidKMeans = new KMeans();
         thyroidKMeans.setDataSet(dataSet);
@@ -165,6 +174,8 @@ public class ClusterController implements Initializable, Init {
         //thyroidKMeans.display();
 
         runtimeLabel.setText(runtime + " ms");
+        costLabel.setText(String.valueOf(thyroidKMeans.getCost()));
+
     }
 
     private void initParams() {

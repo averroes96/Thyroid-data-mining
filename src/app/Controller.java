@@ -162,9 +162,9 @@ public class Controller implements Initializable,Init {
         dataSet.discretize(2, 4);
         dataSet.discretize(3, 4);
         dataSet.discretize(4, 4);
-        dataSet.discretize(5, 4);
+        dataSet.discretize(5, 4);*/
 
-        dataSet.IQR();*/
+        dataSet.IQR();
 
         /*KMediods thyroidKMediods = new KMediods();
         DataSet[] clusters = thyroidKMediods.run(dataSet);
@@ -251,6 +251,7 @@ public class Controller implements Initializable,Init {
             root = loader.load();
             ClusterController cc = loader.getController();
             cc.setDataSet(dataSet);
+            cc.originalRows = dataSet.getRows();
         } catch (IOException exception) {
             exception.printStackTrace();
         }

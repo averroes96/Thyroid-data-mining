@@ -74,25 +74,22 @@ public class KMediods implements Init {
             medoids.add(dataSet.getRows().get(random));
         }
 
-
-        boolean changed = true;
+        //boolean changed = true;
         int count = 0;
-        while (changed && count < maxIter) {
-            changed = false;
+        while (count < maxIter) {
+            //changed = false;
             count++;
             int[] assignment = assign(medoids, dataSet);
-            changed = recalculateMedoids(assignment, medoids, output, dataSet);
+            recalculateMedoids(assignment, medoids, output, dataSet);
 
         }
-
-        System.out.println(count);
-
+        
         return output;
     }
 
-    private boolean recalculateMedoids(int[] assignment, ObservableList<Row> medoids, DataSet[] output, DataSet dataSet) {
+    private void recalculateMedoids(int[] assignment, ObservableList<Row> medoids, DataSet[] output, DataSet dataSet) {
 
-        boolean changed = false;
+        //boolean changed = false;
         for (int i = 0; i < K; i++) {
             output[i] = new DataSet();
             for (int j = 0; j < assignment.length; j++) {
@@ -104,21 +101,21 @@ public class KMediods implements Init {
                 //System.out.println("Cluster " + i + " is Empty!");
                 medoids.set(i, dataSet.getRows().get(rand.nextInt(dataSet.size())));
                 //System.out.println("Mediod " + i + " changed");
-                changed = true;
+                //changed = true;
             } else {
                 Row oldMedoid = medoids.get(i);
-                Row centroid =  dataSet.kNearest(1, oldMedoid, distance).iterator().next();
+                Row centroid =  output[i].getRows().get(rand.nextInt(output[i].size()));//dataSet.kNearest(1, oldMedoid, distance).iterator().next();
 
                 medoids.set(i, centroid);
                 calculaNewCost(dataSet, medoids);
 
                 if(currentCost <= newCost)
                     medoids.set(i, oldMedoid);
-                else
-                    changed = true;
+                //else
+                    //changed = true;
             }
         }
-        return changed;
+        //return changed;
     }
 
     private void calculaNewCost(DataSet dataSet, ObservableList<Row> medoids) {

@@ -15,6 +15,7 @@ public class KMeans implements Init {
     int k;
     int maxIters;
     int noChanges;
+    double cost;
     int distance;
     int numFeatures;
     DataSet dataSet;
@@ -26,6 +27,14 @@ public class KMeans implements Init {
         maxIters = 1;
         numFeatures = 1;
         distance = EUCLEDIAN;
+    }
+
+    public double getCost() {
+        return cost;
+    }
+
+    public void setCost(int cost) {
+        this.cost = cost;
     }
 
     public int getNumFeatures() {
@@ -81,6 +90,7 @@ public class KMeans implements Init {
 
         int k1 = 0;
         double dist = 0;
+        cost = 0;
 
         for(Row row : rows) {
             double minimum = 999999.0;
@@ -96,16 +106,14 @@ public class KMeans implements Init {
                     k1 = j;
                 }
 
-                //System.out.println("Centroid = " + j + " Dist = " + dist);
-
             }
+            cost += minimum;
             clusters.put(row, k1);
         }
 
     }
 
     public Row centroidCalculator(ObservableList<Row> rows) {
-
 
         double sum;
 
@@ -128,12 +136,8 @@ public class KMeans implements Init {
         init(dataSet.getRows(), distance, centroids, k);
         //reassigning to new clusters
         for (int i = 0; i < maxIters; i++) {
-            System.out.println("Iteration = " + (i + 1));
-            for(int center : centroids.keySet()){
-                System.out.println(centroids.get(center));
-            }
-            for (int j = 0; j < k; j++) {
 
+            for (int j = 0; j < k; j++) {
                 ObservableList<Row> temp = FXCollections.observableArrayList();
                 int cpt = 0;
                 for (Row cls : clusters.keySet()) {
@@ -142,7 +146,6 @@ public class KMeans implements Init {
                         cpt++;
                     }
                 }
-                System.out.println("Cluster = " + j + " Rows : " + cpt);
                 row = centroidCalculator(temp);
                 centroids.put(j, row);
 
@@ -156,7 +159,6 @@ public class KMeans implements Init {
 
     public void display(){
 
-        System.out.println("\nFinal Clustering of Data");
         for (Row row : clusters.keySet()) {
             System.out.print(row.getValueByPosition(0) + "\t \t");
             System.out.print(clusters.get(row) + "\n");
