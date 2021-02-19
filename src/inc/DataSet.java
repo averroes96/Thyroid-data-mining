@@ -583,7 +583,6 @@ public class DataSet implements Init,Cloneable {
 
         temp.addAll(closest.keySet());
 
-        System.out.println(temp.size());
         return temp ;
     }
 

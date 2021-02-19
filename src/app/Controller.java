@@ -1,6 +1,7 @@
 package app;
 
 import algos.Apriori;
+import algos.CLARANS;
 import algos.KMeans;
 import algos.KMediods;
 import animatefx.animation.ZoomIn;
@@ -150,13 +151,28 @@ public class Controller implements Initializable,Init {
 
         dataSet.IQR();*/
 
-        KMediods thyroidKMediods = new KMediods();
+        /*KMediods thyroidKMediods = new KMediods();
         DataSet[] clusters = thyroidKMediods.run(dataSet);
         int k = 1;
         for(DataSet ds : clusters){
             System.out.println("Cluster = " + k + " Size = " + ds.size());
             for(Row row : ds.getRows())
                 System.out.println(row);
+            k++;
+        }*/
+
+        int k = 1;
+        CLARANS thyroidClarans = new CLARANS();
+        thyroidClarans.setMaxIters(1000);
+        thyroidClarans.run(dataSet);
+
+        DataSet[] result = thyroidClarans.output;
+
+        for(DataSet ds : result){
+            System.out.println("Cluster " + k + " = " + ds.size());
+            for(Row row : ds.getRows()){
+                System.out.println(row);
+            }
             k++;
         }
 
