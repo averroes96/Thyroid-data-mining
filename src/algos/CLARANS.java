@@ -68,6 +68,22 @@ public class CLARANS implements Init {
         this.maxNeighbors = maxNeighbors;
     }
 
+    public int getDistance() {
+        return distance;
+    }
+
+    public void setDistance(int distance) {
+        this.distance = distance;
+    }
+
+    public double getMinCost() {
+        return minCost;
+    }
+
+    public void setMinCost(double minCost) {
+        this.minCost = minCost;
+    }
+
     public void run(DataSet ds){
 
         int i = 0;
@@ -80,11 +96,11 @@ public class CLARANS implements Init {
 
         while(i < maxIters){
 
-            System.out.println("Iteration = " + i + " =======================================================");
+            //System.out.println("Iteration = " + i + " =======================================================");
             selectMedoids(ds);
             totalCost = assignToClusters(ds, medoids);
 
-            System.out.println("Total cost = " + totalCost);
+            //System.out.println("Total cost = " + totalCost);
 
             int j = 0;
 
@@ -101,7 +117,7 @@ public class CLARANS implements Init {
                 medoids.set(pos, newMedoid);
 
                 double newCost = assignToClusters(ds, medoids);
-                System.out.println("New cost = " + newCost);
+                //System.out.println("New cost = " + newCost);
 
                 if(newCost < totalCost)
                     totalCost = newCost;
@@ -116,24 +132,24 @@ public class CLARANS implements Init {
             if(totalCost < minCost){
                 bestNode = medoids;
                 minCost = totalCost;
-                System.out.println("Min Cost = " + minCost);
+                //System.out.println("Min Cost = " + minCost);
             }
 
             i++;
 
-            System.out.println("===================================================================================");
+            //System.out.println("===================================================================================");
         }
 
         assignToClusters(ds, bestNode);
 
-        System.out.println("Best medoids==============================================");
+        //System.out.println("Best medoids==============================================");
         for(Row row : bestNode){
             System.out.println(row);
         }
-        System.out.println("===========================================================");
+        //System.out.println("===========================================================");
 
-        System.out.println("Max Neighbors = " + maxNeighbors);
-        System.out.println("Min cost = " + minCost);
+        //System.out.println("Max Neighbors = " + maxNeighbors);
+        //System.out.println("Min cost = " + minCost);
 
     }
 
@@ -167,14 +183,14 @@ public class CLARANS implements Init {
 
     private void selectMedoids(DataSet ds) {
 
-        System.out.println("Selected medoid ====================================");
+        //System.out.println("Selected medoid ====================================");
         medoids.clear();
         for (int i = 0; i < K; i++) {
             int random = rand.nextInt(ds.getRows().size());
             medoids.add(ds.getRows().get(random));
             System.out.println(ds.getRows().get(random));
         }
-        System.out.println("===========================================================");
+        //System.out.println("===========================================================");
     }
 
 }

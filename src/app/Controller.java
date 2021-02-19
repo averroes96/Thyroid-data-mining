@@ -12,7 +12,9 @@ import inc.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Scene;
 import javafx.scene.chart.*;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
@@ -21,6 +23,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
+import javafx.stage.Stage;
 
 import javax.xml.crypto.Data;
 import java.io.*;
@@ -34,7 +37,7 @@ public class Controller implements Initializable,Init {
     private ImageView informationIV,boxPlotIV;
 
     @FXML
-    private JFXButton displayBtn,kmeansBtn;
+    private JFXButton displayBtn,clusteringBtn,aprioriBtn;
 
     @FXML
     private AnchorPane valuesAP,histoAP,scatterAP,boxPlotAP;
@@ -141,6 +144,18 @@ public class Controller implements Initializable,Init {
             scrollPane.setContent(stackPane);
         });
 
+        aprioriBtn.setOnAction(action -> {
+
+            FXMLLoader loader = new FXMLLoader(getClass().getResource( "Apriori.fxml"));
+            startStage(loader);
+        });
+
+        clusteringBtn.setOnAction(action -> {
+
+            FXMLLoader loader = new FXMLLoader(getClass().getResource( "Cluster.fxml"));
+            startStage(loader);
+        });
+
         /*
         dataSet.discretize(0, 4);
         dataSet.discretize(1, 4);
@@ -161,7 +176,7 @@ public class Controller implements Initializable,Init {
             k++;
         }*/
 
-        int k = 1;
+        /*int k = 1;
         CLARANS thyroidClarans = new CLARANS();
         thyroidClarans.setMaxIters(1000);
         thyroidClarans.run(dataSet);
@@ -174,7 +189,7 @@ public class Controller implements Initializable,Init {
                 System.out.println(row);
             }
             k++;
-        }
+        }*/
 
         /*
 
@@ -228,6 +243,23 @@ public class Controller implements Initializable,Init {
             System.out.println(row.getValueByPosition(2));
         }*/
 
+    }
+
+    private void startStage(FXMLLoader loader) {
+        AnchorPane root = null;
+        try {
+            root = loader.load();
+            ClusterController cc = loader.getController();
+            cc.setDataSet(dataSet);
+        } catch (IOException exception) {
+            exception.printStackTrace();
+        }
+
+        Scene scene = new Scene(root);
+        scene.setFill(javafx.scene.paint.Color.TRANSPARENT);
+        Stage stage = new Stage();
+        stage.setScene(scene);
+        stage.show();
     }
 
     private String getDisplayedDataSet() throws IOException {

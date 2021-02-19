@@ -24,3 +24,48 @@
     -fx-text-fill: #eee;
     -fx-background-radius: 8 8 0 0;
 }
+
+.primary-background{
+    -fx-background-color: #003f5c;
+    -fx-text-fill: #eeeeee;
+}
+
+.secondary-background{
+    -fx-text-fill: #003f5c;
+    -fx-background-color: #eeeeee;
+}
+
+.secondary-label{
+    -fx-text-fill: #003f5c;
+    -fx-background-color: #eeeeee;
+    -fx-alignment: center;
+    -fx-font-size: 16;
+}
+
+.secondary-label-bold{
+    -fx-font-weight: bold;
+}
+
+.full-radius{
+    -fx-background-radius: 16;
+}
+
+.label-hover:hover{
+    -fx-background-color: #c9c9c9
+}
+
+.label-selected{
+    -fx-background-color: #ffa600;
+}
+
+.edit-text{
+    -jfx-focus-color: #ffa600;
+    -jfx-unfocus-color: #003f5c;
+    -fx-alignment: center;
+    -fx-font-size: 14px;
+    -fx-font-family: Consolas;
+    -fx-font-weight: bold;
+    -fx-text-fill: #ffa600;
+}
+
+

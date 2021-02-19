@@ -56,6 +56,14 @@ public class KMediods implements Init {
         this.maxIter = maxIter;
     }
 
+    public double getCurrentCost() {
+        return currentCost;
+    }
+
+    public void setCurrentCost(double currentCost) {
+        this.currentCost = currentCost;
+    }
+
     public DataSet[] run(DataSet dataSet){
 
         ObservableList<Row> medoids = FXCollections.observableArrayList();
