@@ -21,6 +21,9 @@ public class KMediods implements Init {
     private double currentCost = 0;
     private double newCost = 0;
 
+    public ObservableList<Row> medoids = FXCollections.observableArrayList();
+
+
     public KMediods() {
         this(3, 100, EUCLEDIAN);
     }
@@ -66,7 +69,6 @@ public class KMediods implements Init {
 
     public DataSet[] run(DataSet dataSet){
 
-        ObservableList<Row> medoids = FXCollections.observableArrayList();
         DataSet[] output = new DataSet[K];
 
         for (int i = 0; i < K; i++) {
@@ -137,7 +139,6 @@ public class KMediods implements Init {
             newCost += bestDistance;
 
         }
-        System.out.println("New Cost = " + newCost);
     }
 
 
@@ -165,7 +166,6 @@ public class KMediods implements Init {
             out[i] = bestIndex;
 
         }
-        System.out.println("Current cost = " + currentCost);
         return out;
     }
 }

@@ -139,11 +139,9 @@ public class KMeans implements Init {
 
             for (int j = 0; j < k; j++) {
                 ObservableList<Row> temp = FXCollections.observableArrayList();
-                int cpt = 0;
                 for (Row cls : clusters.keySet()) {
                     if (clusters.get(cls) == j) {
                         temp.add(cls);
-                        cpt++;
                     }
                 }
                 row = centroidCalculator(temp);
@@ -155,6 +153,28 @@ public class KMeans implements Init {
 
         }
 
+    }
+
+    public DataSet[] getClusters(){
+
+        DataSet[] temp = new DataSet[k];
+        for(int i = 0; i < k; i++)
+            temp[i] = new DataSet();
+
+        for(Row row : clusters.keySet()){
+            temp[clusters.get(row)].getRows().add(row);
+        }
+
+        return temp;
+    }
+
+    public ObservableList<Row> getCentroids(){
+
+        ObservableList<Row> temp = FXCollections.observableArrayList();
+        for(Integer val : centroids.keySet())
+            temp.add(centroids.get(val));
+
+        return temp;
     }
 
     public void display(){

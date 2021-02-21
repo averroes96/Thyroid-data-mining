@@ -198,6 +198,16 @@ public class Row{
         return temp;
     }
 
+    public String getTransaction(){
+
+        return "B" + t3ResinUptakeTest + " "
+                + "C" + serumThyroxin + " "
+                + "D" + serumTriiodothyronine + " "
+                + "E" + tsh + " "
+                + "F" + newTsh;
+
+    }
+
     public double getDissimilarity(Row row){
 
         double sum = 0;

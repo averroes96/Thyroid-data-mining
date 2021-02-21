@@ -9,15 +9,22 @@ import com.jfoenix.controls.JFXToggleButton;
 import inc.DataSet;
 import inc.Init;
 import inc.Row;
+import javafx.beans.property.ObjectPropertyBase;
+import javafx.beans.value.ObservableValueBase;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
+import javax.xml.crypto.Data;
+import java.io.IOException;
 import java.net.URL;
 import java.time.Duration;
 import java.time.Instant;
@@ -26,10 +33,10 @@ import java.util.ResourceBundle;
 public class ClusterController implements Initializable, Init {
 
     @FXML
-    Label kmeans,kmedoids,clarans,costLabel,fmeasureLabel,runtimeLabel;
+    Label kmeans,kmedoids,clarans,costLabel,fmeasureLabel,runtimeLabel,chosenLabel;
 
     @FXML
-    VBox kmeansParamsVB,kmedoidsParamsVB,claransParamsVB;
+    VBox kmeansParamsVB,kmedoidsParamsVB,claransParamsVB,clustersVB;
 
     @FXML
     JFXTextField ncKmeans,ncKmedoids,ncClarans,maxItersKmeans,maxItersKmedoids,maxItersClarans,maxNeighbors;
@@ -64,31 +71,49 @@ public class ClusterController implements Initializable, Init {
             selectParams(action);
             updateStyle(action);
             selectedAlgo = "kmeans";
+            chosenLabel.setText("KMeans");
         });
 
         kmedoids.setOnMouseClicked(action -> {
             selectParams(action);
             updateStyle(action);
             selectedAlgo = "kmedoids";
+            chosenLabel.setText("KMedoids");
         });
 
         clarans.setOnMouseClicked(action -> {
             selectParams(action);
             updateStyle(action);
             selectedAlgo = "clarans";
+            chosenLabel.setText("CLARANS");
         });
 
         runBtn.setOnAction(action -> {
-            if(selectedAlgo.equals("kmeans"))
-                runKMeans();
-            if(selectedAlgo.equals("kmedoids"))
-                runKMedoids();
-            if(selectedAlgo.equals("clarans"))
-                runCLARANS();
+            if(selectedAlgo.equals("kmeans")) {
+                try {
+                    runKMeans();
+                } catch (IOException exception) {
+                    exception.printStackTrace();
+                }
+            }
+            if(selectedAlgo.equals("kmedoids")) {
+                try {
+                    runKMedoids();
+                } catch (IOException exception) {
+                    exception.printStackTrace();
+                }
+            }
+            if(selectedAlgo.equals("clarans")) {
+                try {
+                    runCLARANS();
+                } catch (IOException exception) {
+                    exception.printStackTrace();
+                }
+            }
         });
     }
 
-    private void runCLARANS() {
+    private void runCLARANS() throws IOException {
 
         // Time variables
         Instant start,end;
@@ -109,12 +134,31 @@ public class ClusterController implements Initializable, Init {
         thyroidClarans.run(dataSet);
         end = Instant.now();
 
+        displayClusters(thyroidClarans.output, thyroidClarans.bestNode);
+
         runtime = Duration.between(start, end).toMillis();
         runtimeLabel.setText(runtime + " ms");
         costLabel.setText(String.valueOf(thyroidClarans.getMinCost()));
     }
 
-    private void runKMedoids() {
+    private void displayClusters(DataSet[] output, ObservableList<Row> centroids) throws IOException {
+
+        int clusterCpt = 0;
+        clustersVB.getChildren().clear();
+        for(DataSet ds : output) {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("ClusterResult.fxml"));
+            loader.load();
+            Node node = loader.getRoot();
+            ClusterResultController iController = loader.getController();
+            iController.setClusterInformation(clusterCpt + 1, ds.size(), centroids.get(clusterCpt));
+            clustersVB.getChildren().add(node);
+            clustersVB.getChildren().get(clusterCpt);
+            clusterCpt++;
+
+        }
+    }
+
+    private void runKMedoids() throws IOException {
 
         // Time variables
         Instant start,end;
@@ -131,17 +175,18 @@ public class ClusterController implements Initializable, Init {
         thyroidKMediods.setDistance(distance);
 
         start = Instant.now();
-        thyroidKMediods.run(dataSet);
+        DataSet[] output = thyroidKMediods.run(dataSet);
         end = Instant.now();
         runtime = Duration.between(start, end).toMillis();
         //thyroidKMeans.display();
 
+        displayClusters(output, thyroidKMediods.medoids);
         runtimeLabel.setText(runtime + " ms");
         costLabel.setText(String.valueOf(thyroidKMediods.getCurrentCost()));
 
     }
 
-    private void runKMeans() {
+    private void runKMeans() throws IOException {
 
         // Time variables
         Instant start,end;
@@ -172,6 +217,8 @@ public class ClusterController implements Initializable, Init {
         end = Instant.now();
         runtime = Duration.between(start, end).toMillis();
         //thyroidKMeans.display();
+
+        displayClusters(thyroidKMeans.getClusters(), thyroidKMeans.getCentroids());
 
         runtimeLabel.setText(runtime + " ms");
         costLabel.setText(String.valueOf(thyroidKMeans.getCost()));

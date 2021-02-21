@@ -345,27 +345,7 @@ public class DataSet implements Init,Cloneable {
 
         bins = equalFrequencyPartition(values, binSize);
 
-        /*
-        System.out.println("Before Smothing");
-
-        for(Integer bin : bins.keySet()){
-            System.out.println(bin + ":");
-            for(Double val : bins.get(bin)){
-                System.out.println(val);
-            }
-        }*/
-
         smoothingByBounderies(bins);
-
-        /*
-        System.out.println("After Smothing");
-
-        for(Integer bin : bins.keySet()){
-            System.out.println(bin + ":");
-            for(Double val : bins.get(bin)){
-                System.out.println(val);
-            }
-        }*/
 
         for(Integer bin : bins.keySet()){
             discretedData.addAll(bins.get(bin));
@@ -385,8 +365,6 @@ public class DataSet implements Init,Cloneable {
                 else{
                     double minVal = getRows().get(i).getValueByPosition(pos) - discretedData.get(cpt - 1);
                     double maxVal = discretedData.get(cpt) - getRows().get(i).getValueByPosition(pos);
-                    //System.out.println("Min= " + minVal);
-                    //System.out.println("Max= " + maxVal);
                     if(minVal <= maxVal){
                         getRows().get(i).set(pos, discretedData.get(cpt - 1));
                     }
@@ -395,29 +373,6 @@ public class DataSet implements Init,Cloneable {
                 }
             }
         }
-
-        /*
-        ArrayList<Double> tempRows = new ArrayList<>();
-        ArrayList<Double> tempDisc = new ArrayList<>();
-        for (Double val : getValuesByPosition(pos)) {
-            if(!tempRows.contains(val)){
-                tempRows.add(val);
-            }
-        }
-
-        for (Double val : discretedData) {
-            if(!tempDisc.contains(val)){
-                tempDisc.add(val);
-            }
-        }
-
-        System.out.println(tempRows.size());
-        System.out.println(tempDisc.size());*/
-
-        /*
-        for (Double val : discretedData){
-            System.out.print(val + " ");
-        }*/
 
     }
 
@@ -509,7 +464,6 @@ public class DataSet implements Init,Cloneable {
                     Q1List.add(temp.get(i));
                 }
                 for (int i = half + 1; i <= temp.size() - 1 ; i++) {
-                    //System.out.println(i);
                     Q3List.add(temp.get(i));
                 }
             }
@@ -585,7 +539,6 @@ public class DataSet implements Init,Cloneable {
                 max = d;
                 tmp = row;
             }
-            // System.out.println("d="+d+"\t"+max);
         }
         closest.remove(tmp);
 
@@ -606,5 +559,71 @@ public class DataSet implements Init,Cloneable {
 
         }
         return tmpOut;
+    }
+
+    public void getMinCost(){
+
+        ObservableList<Row> first = getRowsByClass(1);
+        ObservableList<Row> second = getRowsByClass(2);
+        ObservableList<Row> third = getRowsByClass(3);
+
+
+        Row firstMean = getMeanByClass(1, first);
+        Row secondMean = getMeanByClass(2, second);
+        Row thirdMean = getMeanByClass(3, third);
+
+        double firstCost = getCostByClass(first, firstMean);
+        double secondCost = getCostByClass(second, secondMean);
+        double thirdCost = getCostByClass(third, thirdMean);
+
+
+        System.out.println(first.size());
+        System.out.println(firstMean);
+        System.out.println(secondMean);
+        System.out.println(thirdMean);
+        System.out.println(thirdCost);
+    }
+
+    private double getCostByClass(ObservableList<Row> temp, Row mean) {
+
+        double distance;
+        double cost = 0;
+        for(Row row : temp){
+            distance = Distance.calculateDistance(EUCLEDIAN, mean, row, 6);
+            cost += distance;
+        }
+
+        return cost;
+    }
+
+    private Row getMeanByClass(int classNumber, ObservableList<Row> temp) {
+
+        double globalSum;
+        double localSum;
+        Row row = new Row();
+        row.set(0, classNumber);
+        for(int i = 1; i < 6; i++) {
+            localSum = 0;
+            globalSum = 0;
+            for (Row tmp : temp) {
+                localSum += tmp.getValueByPosition(i);
+            }
+            globalSum += localSum / temp.size();
+            row.set(i, globalSum);
+        }
+
+        return row;
+    }
+
+    private ObservableList<Row> getRowsByClass(int classNumber) {
+
+        ObservableList<Row> temp = FXCollections.observableArrayList();
+
+        for(Row row : rows){
+            if(row.getValueByPosition(0) == classNumber)
+                temp.add(row);
+        }
+
+        return temp;
     }
 }

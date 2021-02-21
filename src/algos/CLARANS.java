@@ -19,8 +19,8 @@ public class CLARANS implements Init {
     private int distance;
     private double totalCost;
 
-    ObservableList<Row> medoids = FXCollections.observableArrayList();
-    ObservableList<Row> bestNode = FXCollections.observableArrayList();
+    public ObservableList<Row> medoids = FXCollections.observableArrayList();
+    public ObservableList<Row> bestNode = FXCollections.observableArrayList();
     public DataSet[] output;
 
     public CLARANS() {
@@ -90,6 +90,7 @@ public class CLARANS implements Init {
         minCost = 9999;
         bestNode = FXCollections.observableArrayList();
         this.maxNeighbors = (int) Math.round(0.0125 * K * (ds.size() - K));
+        this.output = new DataSet[K];
 
         for(int c = 0; c < K; c++)
             output[c] = new DataSet();

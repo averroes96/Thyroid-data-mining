@@ -1,9 +1,6 @@
 package app;
 
-import algos.Apriori;
-import algos.CLARANS;
-import algos.KMeans;
-import algos.KMediods;
+import algos.*;
 import animatefx.animation.ZoomIn;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXDialog;
@@ -28,6 +25,7 @@ import javafx.stage.Stage;
 import javax.xml.crypto.Data;
 import java.io.*;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.ResourceBundle;
 
@@ -164,7 +162,7 @@ public class Controller implements Initializable,Init {
         dataSet.discretize(4, 4);
         dataSet.discretize(5, 4);*/
 
-        dataSet.IQR();
+        //dataSet.IQR();
 
         /*KMediods thyroidKMediods = new KMediods();
         DataSet[] clusters = thyroidKMediods.run(dataSet);
@@ -242,6 +240,23 @@ public class Controller implements Initializable,Init {
         for(Row row : dataSet.getRows()){
             System.out.println(row.getValueByPosition(2));
         }*/
+
+        //dataSet.getMinCost();
+
+        /*
+        dataSet.discretize(1, 3);
+        dataSet.discretize(2, 3);
+        dataSet.discretize(3, 3);
+        dataSet.discretize(4, 3);
+        dataSet.discretize(5, 3);
+
+        Apriori4j apriori = new Apriori4j();
+        ArrayList<String> transactions = new ArrayList<>();
+        for(Row row : dataSet.getRows())
+            transactions.add(row.getTransaction());
+        int minSup = 2;
+        double minConf = 0.40;
+        apriori.display(transactions.size(), transactions, minSup, minConf);*/
 
     }
 

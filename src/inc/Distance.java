@@ -7,7 +7,6 @@ public class Distance implements Init {
         for(int i = 1; i < numFeatures; i++) {
             sum += ((row1.getValueByPosition(i) - row2.getValueByPosition(i)) * (row1.getValueByPosition(i) - row2.getValueByPosition(i)));
         }
-        //System.out.println(sum);
         return Math.sqrt(sum);
     }
 
