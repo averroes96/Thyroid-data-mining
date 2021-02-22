@@ -243,12 +243,12 @@ public class Controller implements Initializable,Init {
 
         //dataSet.getMinCost();
 
-        /*
-        dataSet.discretize(1, 3);
-        dataSet.discretize(2, 3);
-        dataSet.discretize(3, 3);
-        dataSet.discretize(4, 3);
-        dataSet.discretize(5, 3);
+
+        dataSet.discretize(1, 10);
+        dataSet.discretize(2, 10);
+        dataSet.discretize(3, 10);
+        dataSet.discretize(4, 10);
+        dataSet.discretize(5, 10);
 
         Apriori4j apriori = new Apriori4j();
         ArrayList<String> transactions = new ArrayList<>();
@@ -256,7 +256,7 @@ public class Controller implements Initializable,Init {
             transactions.add(row.getTransaction());
         int minSup = 2;
         double minConf = 0.40;
-        apriori.display(transactions.size(), transactions, minSup, minConf);*/
+        apriori.display(transactions.size(), transactions, minSup, minConf);
 
     }
 

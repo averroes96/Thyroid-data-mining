@@ -106,7 +106,7 @@ public class KMediods implements Init {
                 //changed = true;
             } else {
                 Row oldMedoid = medoids.get(i);
-                Row centroid =  output[i].getRows().get(rand.nextInt(output[i].size()));//dataSet.kNearest(1, oldMedoid, distance).iterator().next();
+                Row centroid =  dataSet.kNearest(1, oldMedoid, distance).iterator().next();
 
                 medoids.set(i, centroid);
                 calculaNewCost(dataSet, medoids);

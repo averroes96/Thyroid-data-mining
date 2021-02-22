@@ -84,6 +84,7 @@ public class KMeans implements Init {
             int randInt = rand.nextInt(dataSet.getRows().size());
             centroids.put(i, dataSet.getRows().get(randInt));
         }
+
     }
 
     public void init(ObservableList<Row> rows, int distance, HashMap<Integer, Row> centroids, int k) {
