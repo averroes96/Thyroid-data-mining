@@ -1,6 +1,5 @@
 package algos;
 
-import inc.Row;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
