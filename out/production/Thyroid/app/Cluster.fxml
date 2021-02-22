@@ -11,6 +11,8 @@
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.effect.DropShadow?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
@@ -27,6 +29,13 @@
                         <String fx:value="secondary-label" />
                         <String fx:value="secondary-label-bold" />
                      </styleClass>
+                     <graphic>
+                        <ImageView>
+                           <image>
+                              <Image url="@../icons/icons8_flow_chart_24px_1.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
                   </Label>
                   <VBox alignment="CENTER" fillWidth="false" prefHeight="200.0" prefWidth="100.0" spacing="8.0">
                      <children>
@@ -65,6 +74,13 @@
                         <String fx:value="secondary-label" />
                         <String fx:value="secondary-label-bold" />
                      </styleClass>
+                     <graphic>
+                        <ImageView>
+                           <image>
+                              <Image url="@../icons/icons8_adjust_24px_1.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
                   </Label>
                   <AnchorPane prefHeight="330.0" prefWidth="256.0">
                      <children>
@@ -72,45 +88,29 @@
                            <children>
                               <VBox alignment="TOP_CENTER" fillWidth="false" prefHeight="72.0" prefWidth="256.0">
                                  <children>
-                                    <Label maxWidth="1.7976931348623157E308" prefHeight="32.0" prefWidth="220.0" text=" Number of clusters">
-                                       <styleClass>
-                                          <String fx:value="secondary-label" />
-                                          <String fx:value="full-radius" />
-                                       </styleClass>
+                                    <Label alignment="CENTER" maxWidth="1.7976931348623157E308" prefHeight="32.0" prefWidth="220.0" text=" Number of clusters" textFill="#003f5c">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
                                     </Label>
                                     <JFXTextField fx:id="ncKmeans" prefHeight="32.0" prefWidth="128.0" styleClass="edit-text" />
                                  </children>
                               </VBox>
                               <VBox alignment="TOP_CENTER" fillWidth="false" layoutX="10.0" layoutY="74.0" prefHeight="72.0" prefWidth="256.0">
                                  <children>
-                                    <Label maxWidth="1.7976931348623157E308" prefHeight="32.0" prefWidth="220.0" text="Max Iterations">
-                                       <styleClass>
-                                          <String fx:value="secondary-label" />
-                                          <String fx:value="full-radius" />
-                                       </styleClass>
-                                    </Label>
+                                    <Label maxWidth="1.7976931348623157E308" prefHeight="32.0" prefWidth="220.0" styleClass="param-title" text="Max Iterations" />
                                     <JFXTextField fx:id="maxItersKmeans" prefHeight="32.0" prefWidth="128.0" styleClass="edit-text" />
                                  </children>
                               </VBox>
                               <VBox alignment="TOP_CENTER" fillWidth="false" layoutX="10.0" layoutY="106.0" prefHeight="72.0" prefWidth="256.0">
                                  <children>
-                                    <Label maxWidth="1.7976931348623157E308" prefHeight="32.0" prefWidth="220.0" text="Outliers">
-                                       <styleClass>
-                                          <String fx:value="secondary-label" />
-                                          <String fx:value="full-radius" />
-                                       </styleClass>
-                                    </Label>
+                                    <Label maxWidth="1.7976931348623157E308" prefHeight="32.0" prefWidth="220.0" styleClass="param-title" text="Outliers" />
                                     <JFXToggleButton fx:id="outliers" text="Keep" textFill="#003f5c" toggleColor="#ffa600" toggleLineColor="#999999" />
                                  </children>
                               </VBox>
                               <VBox alignment="TOP_CENTER" fillWidth="false" prefHeight="72.0" prefWidth="256.0">
                                  <children>
-                                    <Label maxWidth="1.7976931348623157E308" prefHeight="32.0" prefWidth="220.0" text="Distance">
-                                       <styleClass>
-                                          <String fx:value="secondary-label" />
-                                          <String fx:value="full-radius" />
-                                       </styleClass>
-                                    </Label>
+                                    <Label maxWidth="1.7976931348623157E308" prefHeight="32.0" prefWidth="220.0" styleClass="param-title" text="Distance" />
                                     <ChoiceBox fx:id="distanceKmeans" prefHeight="28.0" prefWidth="176.0" style="-fx-border-color: #ddd;" />
                                  </children>
                               </VBox>
@@ -236,10 +236,17 @@
                                     <Font name="Consolas Bold" size="36.0" />
                                  </font>
                               </Label>
-                              <Label alignment="CENTER" layoutX="10.0" layoutY="69.0" maxWidth="1.7976931348623157E308" prefHeight="42.0" prefWidth="256.0" text="Cost" textFill="#0000007a">
+                              <Label alignment="CENTER" graphicTextGap="8.0" layoutX="10.0" layoutY="69.0" maxWidth="1.7976931348623157E308" prefHeight="42.0" prefWidth="256.0" text="Cost" textFill="#0000007a">
                                  <font>
                                     <Font name="System Bold" size="18.0" />
                                  </font>
+                                 <graphic>
+                                    <ImageView opacity="0.48">
+                                       <image>
+                                          <Image url="@../icons/icons8_sigma_24px_2.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
                               </Label>
                            </children>
                         </VBox>
@@ -253,10 +260,17 @@
                                     <Font name="Consolas Bold" size="36.0" />
                                  </font>
                               </Label>
-                              <Label alignment="CENTER" layoutX="10.0" layoutY="69.0" maxWidth="1.7976931348623157E308" prefHeight="42.0" prefWidth="256.0" text="F-Measure" textFill="#0000007a">
+                              <Label alignment="CENTER" graphicTextGap="8.0" layoutX="10.0" layoutY="69.0" maxWidth="1.7976931348623157E308" prefHeight="42.0" prefWidth="256.0" text="F-Measure" textFill="#0000007a">
                                  <font>
                                     <Font name="System Bold" size="18.0" />
                                  </font>
+                                 <graphic>
+                                    <ImageView opacity="0.48">
+                                       <image>
+                                          <Image url="@../icons/icons8_ruler_24px_1.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
                               </Label>
                            </children>
                         </VBox>
@@ -270,10 +284,17 @@
                                     <Font name="Consolas Bold" size="36.0" />
                                  </font>
                               </Label>
-                              <Label alignment="CENTER" layoutX="10.0" layoutY="69.0" maxWidth="1.7976931348623157E308" prefHeight="42.0" prefWidth="256.0" text="Runtime" textFill="#0000007a">
+                              <Label alignment="CENTER" graphicTextGap="8.0" layoutX="10.0" layoutY="69.0" maxWidth="1.7976931348623157E308" prefHeight="42.0" prefWidth="256.0" text="Runtime" textFill="#0000007a">
                                  <font>
                                     <Font name="System Bold" size="18.0" />
                                  </font>
+                                 <graphic>
+                                    <ImageView opacity="0.48">
+                                       <image>
+                                          <Image url="@../icons/icons8_time_24px.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
                               </Label>
                            </children>
                         </VBox>
@@ -282,18 +303,25 @@
                         <Insets left="8.0" right="8.0" />
                      </padding>
                   </HBox>
-                  <ScrollPane fitToHeight="true" fitToWidth="true" prefHeight="324.0" prefWidth="752.0" style="-fx-background-insets: 0; -fx-background-color: #eee; -fx-border-color: #aaa; -fx-border-width: 0 0 2;">
+                  <ScrollPane fitToHeight="true" fitToWidth="true" prefHeight="324.0" prefWidth="752.0" style="-fx-background-insets: 0; -fx-background-color: #eee;">
                      <content>
                         <VBox fx:id="clustersVB" alignment="TOP_CENTER" maxWidth="1.7976931348623157E308" prefHeight="153.0" prefWidth="955.0" spacing="8.0" style="-fx-padding: 8;" />
                      </content>
                   </ScrollPane>
-                  <JFXButton fx:id="runBtn" buttonType="RAISED" prefHeight="32.0" prefWidth="128.0" style="-fx-background-color: #003f5c;" text="Run" textFill="#eeeeee">
+                  <JFXButton fx:id="runBtn" buttonType="RAISED" defaultButton="true" prefHeight="32.0" prefWidth="128.0" style="-fx-background-color: #003f5c;" text="Run" textFill="#eeeeee">
                      <cursor>
                         <Cursor fx:constant="HAND" />
                      </cursor>
                      <font>
                         <Font size="14.0" />
                      </font>
+                     <graphic>
+                        <ImageView>
+                           <image>
+                              <Image url="@../icons/icons8_Play_24px_2.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
                   </JFXButton>
                </children>
                <padding>

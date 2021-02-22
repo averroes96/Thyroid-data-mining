@@ -6,6 +6,7 @@ import algos.KMediods;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXTextField;
 import com.jfoenix.controls.JFXToggleButton;
+import inc.Common;
 import inc.DataSet;
 import inc.Init;
 import inc.Row;
@@ -21,12 +22,14 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import java.io.IOException;
 import java.net.URL;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.ResourceBundle;
 
-public class ClusterController implements Initializable, Init {
+public class ClusterController implements Initializable,Init {
 
     @FXML
     Label kmeans,kmedoids,clarans,costLabel,fmeasureLabel,runtimeLabel,chosenLabel;
@@ -49,6 +52,7 @@ public class ClusterController implements Initializable, Init {
     String selectedAlgo = "kmeans";
     DataSet dataSet;
     ObservableList<Row> originalRows = FXCollections.observableArrayList();
+    NumberFormat formatter = new DecimalFormat("#0.00");
 
     public DataSet getDataSet() {
         return dataSet;
@@ -62,6 +66,7 @@ public class ClusterController implements Initializable, Init {
     public void initialize(URL location, ResourceBundle resources) {
 
         initParams();
+        initStyle();
 
         kmeans.setOnMouseClicked(action -> {
             selectParams(action);
@@ -107,6 +112,27 @@ public class ClusterController implements Initializable, Init {
                 }
             }
         });
+
+        Common.controlDigitField(ncClarans);
+        Common.controlDigitField(ncKmeans);
+        Common.controlDigitField(ncKmedoids);
+        Common.controlDigitField(maxItersClarans);
+        Common.controlDigitField(maxItersKmeans);
+        Common.controlDigitField(maxItersKmedoids);
+        Common.controlDigitField(maxNeighbors);
+    }
+
+    private void initStyle() {
+
+        String labelStyle = "    -fx-text-fill: #003f5c;\n" +
+                "    -fx-background-color: #eeeeee;\n" +
+                "    -fx-alignment: center;\n" +
+                "    -fx-font-size: 16;";
+
+        String selectedLabelStyle = "-fx-background-color: #ffa600";
+
+        kmeans.setStyle(labelStyle + selectedLabelStyle);
+        chosenLabel.setText("KMeans");
     }
 
     private void runCLARANS() throws IOException {
@@ -134,8 +160,8 @@ public class ClusterController implements Initializable, Init {
 
         runtime = Duration.between(start, end).toMillis();
         runtimeLabel.setText(runtime + " ms");
-        costLabel.setText(String.valueOf(thyroidClarans.getMinCost()));
-        fmeasureLabel.setText(String.valueOf(getGlobaleFMeasure(dataSet.getRows(), thyroidClarans.output)));
+        costLabel.setText(formatter.format(thyroidClarans.getMinCost()));
+        fmeasureLabel.setText(formatter.format(getGlobaleFMeasure(dataSet.getRows(), thyroidClarans.output)));
     }
 
     private void displayClusters(DataSet[] output, ObservableList<Row> centroids) throws IOException {
@@ -179,8 +205,8 @@ public class ClusterController implements Initializable, Init {
 
         displayClusters(output, thyroidKMediods.medoids);
         runtimeLabel.setText(runtime + " ms");
-        costLabel.setText(String.valueOf(thyroidKMediods.getCurrentCost()));
-        fmeasureLabel.setText(String.valueOf(getGlobaleFMeasure(dataSet.getRows(), output)));
+        costLabel.setText(formatter.format(thyroidKMediods.getCurrentCost()));
+        fmeasureLabel.setText(formatter.format(getGlobaleFMeasure(dataSet.getRows(), output)));
 
     }
 
@@ -200,8 +226,6 @@ public class ClusterController implements Initializable, Init {
         else
             dataSet.setRows(originalRows);
 
-        System.out.println(dataSet.size());
-
         // Running KMeans
         KMeans thyroidKMeans = new KMeans();
         thyroidKMeans.setDataSet(dataSet);
@@ -219,8 +243,8 @@ public class ClusterController implements Initializable, Init {
         displayClusters(thyroidKMeans.getClusters(), thyroidKMeans.getCentroids());
 
         runtimeLabel.setText(runtime + " ms");
-        costLabel.setText(String.valueOf(thyroidKMeans.getCost()));
-        fmeasureLabel.setText(String.valueOf(getGlobaleFMeasure(dataSet.getRows(), thyroidKMeans.getClusters())));
+        costLabel.setText(formatter.format(thyroidKMeans.getCost()));
+        fmeasureLabel.setText(formatter.format(getGlobaleFMeasure(dataSet.getRows(), thyroidKMeans.getClusters())));
 
     }
 
@@ -361,4 +385,5 @@ public class ClusterController implements Initializable, Init {
 
         return sum / size;
     }
+
 }

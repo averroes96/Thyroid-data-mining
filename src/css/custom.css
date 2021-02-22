@@ -97,3 +97,9 @@
 .scroll-pane > .corner {
     -fx-background-color: black;
 }
+
+.param-title{
+    -fx-font-size: 14px;
+    -fx-alignment: center;
+    -fx-text-fill: #003f5c;
+}

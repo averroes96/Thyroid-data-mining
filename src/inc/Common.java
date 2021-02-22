@@ -6,6 +6,7 @@ import com.jfoenix.controls.JFXDialogLayout;
 import com.jfoenix.controls.JFXScrollPane;
 import javafx.collections.ObservableList;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
 
@@ -132,5 +133,19 @@ public class Common {
         layout.setHeading(label);
         layout.setBody(new Text(body));
 
+    }
+
+    public static void controlDigitField(TextField field){
+        field.textProperty().addListener((observable, oldValue, newValue) -> {
+            try {
+                Integer.parseInt(newValue);
+            }
+            catch(NumberFormatException e){
+                if(field.getText().trim().isEmpty())
+                    field.setText("");
+                else
+                    field.setText(oldValue);
+            }
+        });
     }
 }
