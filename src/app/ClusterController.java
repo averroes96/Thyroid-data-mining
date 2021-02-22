@@ -9,8 +9,6 @@ import com.jfoenix.controls.JFXToggleButton;
 import inc.DataSet;
 import inc.Init;
 import inc.Row;
-import javafx.beans.property.ObjectPropertyBase;
-import javafx.beans.value.ObservableValueBase;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -20,14 +18,12 @@ import javafx.scene.Node;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-
-import javax.xml.crypto.Data;
 import java.io.IOException;
 import java.net.URL;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.HashMap;
 import java.util.ResourceBundle;
 
 public class ClusterController implements Initializable, Init {
@@ -139,6 +135,7 @@ public class ClusterController implements Initializable, Init {
         runtime = Duration.between(start, end).toMillis();
         runtimeLabel.setText(runtime + " ms");
         costLabel.setText(String.valueOf(thyroidClarans.getMinCost()));
+        fmeasureLabel.setText(String.valueOf(getGlobaleFMeasure(dataSet.getRows(), thyroidClarans.output)));
     }
 
     private void displayClusters(DataSet[] output, ObservableList<Row> centroids) throws IOException {
@@ -183,6 +180,7 @@ public class ClusterController implements Initializable, Init {
         displayClusters(output, thyroidKMediods.medoids);
         runtimeLabel.setText(runtime + " ms");
         costLabel.setText(String.valueOf(thyroidKMediods.getCurrentCost()));
+        fmeasureLabel.setText(String.valueOf(getGlobaleFMeasure(dataSet.getRows(), output)));
 
     }
 
@@ -222,6 +220,7 @@ public class ClusterController implements Initializable, Init {
 
         runtimeLabel.setText(runtime + " ms");
         costLabel.setText(String.valueOf(thyroidKMeans.getCost()));
+        fmeasureLabel.setText(String.valueOf(getGlobaleFMeasure(dataSet.getRows(), thyroidKMeans.getClusters())));
 
     }
 
@@ -295,5 +294,71 @@ public class ClusterController implements Initializable, Init {
             kmedoidsParamsVB.setVisible(false);
             claransParamsVB.setVisible(true);
         }
+    }
+
+    private double getGlobaleFMeasure(ObservableList<Row> rows, DataSet[] outputs){
+
+        HashMap<Double, ObservableList<Row>> classes = new HashMap<>();
+        double sum = 0;
+
+        for(Row row : rows){
+            if(!classes.containsKey(row.getValueByPosition(0))){
+                classes.put(row.getValueByPosition(0), FXCollections.observableArrayList());
+            }
+            else
+                classes.get(row.getValueByPosition(0)).add(row);
+        }
+
+        for(double cls : classes.keySet()){
+            sum += ((double)classes.get(cls).size() / rows.size()) * getClassMaxFMeasure(classes.get(cls), outputs);
+        }
+
+        return sum;
+
+    }
+
+    private double getClassMaxFMeasure(ObservableList<Row> classRows, DataSet[] outputs){
+
+        double max = 0;
+        double curr = 0;
+        for(DataSet ds : outputs){
+            curr = getFMeasure(classRows, ds);
+            if(curr > max)
+                max = curr;
+        }
+
+        return max;
+    }
+
+    private double getFMeasure(ObservableList<Row> classRows, DataSet output){
+
+        double classNum = classRows.get(0).getValueByPosition(0);
+        double precision = getPrecision(classNum, output);
+        double recall = getRecall(output, classRows.size(), classNum);
+
+        return (2 * precision * recall) / (precision + recall);
+
+    }
+
+    private double getPrecision(double classNum, DataSet output){
+
+        double sum = 0;
+        for(Row row : output.getRows()){
+            if(row.getValueByPosition(0) == classNum)
+                sum++;
+        }
+
+        return sum / output.size();
+    }
+
+    private double getRecall(DataSet output, int size, double classNum){
+
+        double sum = 0;
+        for(Row row : output.getRows()){
+            if(row.getValueByPosition(0) == classNum)
+                sum++;
+        }
+
+        return sum / size;
     }
 }
