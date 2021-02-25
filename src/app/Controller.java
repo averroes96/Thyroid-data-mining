@@ -1,6 +1,5 @@
 package app;
 
-import algos.*;
 import animatefx.animation.ZoomIn;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXDialog;
@@ -22,11 +21,8 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
-import javax.xml.crypto.Data;
 import java.io.*;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.ResourceBundle;
 
 public class Controller implements Initializable,Init {
@@ -77,6 +73,9 @@ public class Controller implements Initializable,Init {
 
         getDataSet(dataSet);
         getDataSet(discretData);
+
+        valuesTAB.setId("selected-label");
+        valuesTAB.setGraphic(getIcon("dist_primary.png"));
 
         attributesList.addAll("Class attribute",
                 "T3-resin uptake test",
@@ -317,29 +316,80 @@ public class Controller implements Initializable,Init {
     private void selectTab(MouseEvent action) {
 
         if(action.getSource() == valuesTAB){
+
+            valuesTAB.setId("selected-label");
+            histogramTAB.setId("menu-label");
+            scatterTAB.setId("menu-label");
+            boxPlotTAB.setId("menu-label");
+
+            valuesTAB.setGraphic(getIcon("dist_primary.png"));
+            histogramTAB.setGraphic(getIcon("histo_white.png"));
+            scatterTAB.setGraphic(getIcon("scatter_white.png"));
+            boxPlotTAB.setGraphic(getIcon("box_white.png"));
+
             valuesAP.setVisible(true);
             histoAP.setVisible(false);
             scatterAP.setVisible(false);
             boxPlotAP.setVisible(false);
         }
         else if(action.getSource() == histogramTAB){
+
+            valuesTAB.setId("menu-label");
+            histogramTAB.setId("selected-label");
+            scatterTAB.setId("menu-label");
+            boxPlotTAB.setId("menu-label");
+
+            valuesTAB.setGraphic(getIcon("dist_white.png"));
+            histogramTAB.setGraphic(getIcon("histo_primary.png"));
+            scatterTAB.setGraphic(getIcon("scatter_white.png"));
+            boxPlotTAB.setGraphic(getIcon("box_white.png"));
+
             valuesAP.setVisible(false);
             histoAP.setVisible(true);
             scatterAP.setVisible(false);
             boxPlotAP.setVisible(false);
         }
         else if(action.getSource() == scatterTAB){
+
+            valuesTAB.setId("menu-label");
+            histogramTAB.setId("menu-label");
+            scatterTAB.setId("selected-label");
+            boxPlotTAB.setId("menu-label");
+
+            valuesTAB.setGraphic(getIcon("dist_white.png"));
+            histogramTAB.setGraphic(getIcon("histo_white.png"));
+            scatterTAB.setGraphic(getIcon("scatter_primary.png"));
+            boxPlotTAB.setGraphic(getIcon("box_white.png"));
+
             valuesAP.setVisible(false);
             histoAP.setVisible(false);
             scatterAP.setVisible(true);
             boxPlotAP.setVisible(false);
         }
         else if(action.getSource() == boxPlotTAB){
+
+            valuesTAB.setId("menu-label");
+            histogramTAB.setId("menu-label");
+            scatterTAB.setId("menu-label");
+            boxPlotTAB.setId("selected-label");
+
+            valuesTAB.setGraphic(getIcon("dist_white.png"));
+            histogramTAB.setGraphic(getIcon("histo_white.png"));
+            scatterTAB.setGraphic(getIcon("scatter_white.png"));
+            boxPlotTAB.setGraphic(getIcon("box_primary.png"));
+
             valuesAP.setVisible(false);
             histoAP.setVisible(false);
             scatterAP.setVisible(false);
             boxPlotAP.setVisible(true);
         }
+    }
+
+    private ImageView getIcon(String s) {
+
+        return new ImageView(new Image(
+                ClassLoader.class.getResourceAsStream(ICONS_PATH + s),
+                32, 32, false, false));
     }
 
     private void getSelectedPosition(String selectedItem) {

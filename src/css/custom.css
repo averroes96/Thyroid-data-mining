@@ -69,7 +69,7 @@
 }
 
 .scroll-pane {
-    -fx-background-color: #02030A;
+    -fx-background-color: #003f5c;
 }
 
 .scroll-bar:horizontal, .scroll-bar:vertical{
@@ -90,7 +90,7 @@
 
 .scroll-bar:horizontal .thumb,
 .scroll-bar:vertical .thumb {
-    -fx-background-color: #3D4956;
+    -fx-background-color: #ffa600;
     -fx-background-radius: 5em;
 }
 
@@ -103,3 +103,34 @@
     -fx-alignment: center;
     -fx-text-fill: #003f5c;
 }
+
+#selected-label{
+    -fx-background-color: #ffa600;
+    -fx-text-fill: #003f5c;
+    -fx-background-radius: 8 8 0 0;
+}
+
+.chart-plot-background {
+    -fx-background-color: #003f5c;
+}
+
+.axis {
+    -fx-font-size: 1.4em;
+    -fx-tick-label-fill: #003f5c;
+    -fx-font-family: Tahoma;
+    -fx-tick-length: 20;
+    -fx-minor-tick-length: 10;
+}
+
+.axis-label {
+    -fx-text-fill: #003f5c;
+}
+
+.axis-tick-mark {
+    -fx-stroke: #ffa600;
+    -fx-stroke-width: 1;
+}
+.axis-minor-tick-mark {
+    -fx-stroke: #ff6361;
+}
+
