@@ -38,11 +38,11 @@ public class Common {
 
         // See if left child of root exists and is
         // greater than root
-        if(l < n && list.get(largest).getValueByPosition(pos) < list.get(l).getValueByPosition(pos)){
+        if(l < n && list.get(largest).values[pos] < list.get(l).values[pos]){
             largest = l;
         }
 
-        if(r < n && list.get(largest).getValueByPosition(pos) < list.get(r).getValueByPosition(pos)){
+        if(r < n && list.get(largest).values[pos] < list.get(r).values[pos]){
             largest = r;
         }
 

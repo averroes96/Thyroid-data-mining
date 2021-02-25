@@ -5,7 +5,7 @@ public class Distance implements Init {
     public static double eucledianDistance(Row row1, Row row2, int numFeatures) {
         double sum = 0.0;
         for(int i = 1; i < numFeatures; i++) {
-            sum += ((row1.getValueByPosition(i) - row2.getValueByPosition(i)) * (row1.getValueByPosition(i) - row2.getValueByPosition(i)));
+            sum += ((row1.values[i] - row2.values[i]) * (row1.values[i] - row2.values[i]));
         }
         return Math.sqrt(sum);
     }
@@ -13,7 +13,7 @@ public class Distance implements Init {
     public static double manhattanDistance(Row row1, Row row2, int numFeatures){
         double sum = 0.0;
         for(int i = 1; i < numFeatures; i++) {
-            sum += (Math.abs(row1.getValueByPosition(i) - row2.getValueByPosition(i)));
+            sum += (Math.abs(row1.values[i] - row2.values[i]));
         }
         return sum;
     }

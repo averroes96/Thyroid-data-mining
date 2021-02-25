@@ -144,9 +144,9 @@ public class CLARANS implements Init {
         assignToClusters(ds, bestNode);
 
         //System.out.println("Best medoids==============================================");
-        for(Row row : bestNode){
+        /*for(Row row : bestNode){
             System.out.println(row);
-        }
+        }*/
         //System.out.println("===========================================================");
 
         //System.out.println("Max Neighbors = " + maxNeighbors);
@@ -189,7 +189,7 @@ public class CLARANS implements Init {
         for (int i = 0; i < K; i++) {
             int random = rand.nextInt(ds.getRows().size());
             medoids.add(ds.getRows().get(random));
-            System.out.println(ds.getRows().get(random));
+            //System.out.println(ds.getRows().get(random));
         }
         //System.out.println("===========================================================");
     }

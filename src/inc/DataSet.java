@@ -12,22 +12,40 @@ import java.util.HashMap;
 public class DataSet implements Init,Cloneable {
 
     // rows is the list that contains the dataset's entire rows
-    private ObservableList<Row> rows;
+    ObservableList<Row> rows;
+    int numFeatures;
 
     // Constructors
 
-    public DataSet() {
+    public DataSet(int numFeatures) {
         rows = FXCollections.observableArrayList();
+        for(Row row : rows){
+            row = new Row(numFeatures);
+        }
     }
 
     public DataSet(ObservableList<Row> rows) {
         this.rows = rows;
+        numFeatures = this.rows.get(0).nbrFeatures;
+    }
+
+    public DataSet() {
+        rows = FXCollections.observableArrayList();
+        numFeatures = 0;
     }
 
     // Getters and Setters
 
     public ObservableList<Row> getRows() {
         return rows;
+    }
+
+    public int getNumFeatures() {
+        return numFeatures;
+    }
+
+    public void setNumFeatures(int numFeatures) {
+        this.numFeatures = numFeatures;
     }
 
     public void setRows(ObservableList<Row> rows) {
@@ -63,13 +81,13 @@ public class DataSet implements Init,Cloneable {
         for(Row val1 : rows){
             int count = 0;
             for(Row val2 : rows){
-                if(val1.getValueByPosition(attrPosition) == val2.getValueByPosition(attrPosition)){
+                if(val1.values[attrPosition] == val2.values[attrPosition]){
                     count++;
                 }
             }
             if(count > maxCount){
                 maxCount = count;
-                maxValue = val1.getValueByPosition(attrPosition);
+                maxValue = val1.values[attrPosition];
             }
         }
 
@@ -82,39 +100,8 @@ public class DataSet implements Init,Cloneable {
 
         double sum = 0;
 
-        switch (pos){
-            case 0:
-                for(Row row: rows){
-                    sum += row.getAttributeClass();
-                }
-                break;
-            case 1:
-                for(Row row: rows){
-                    sum += row.getT3ResinUptakeTest();
-                }
-                break;
-            case 2:
-                for(Row row: rows){
-                    sum += row.getSerumThyroxin();
-                }
-                break;
-            case 3:
-                for(Row row: rows){
-                    sum += row.getSerumTriiodothyronine();
-                }
-                break;
-            case 4:
-                for(Row row: rows){
-                    sum += row.getTsh();
-                }
-                break;
-            case 5:
-                for(Row row: rows){
-                    sum += row.getNewTsh();
-                }
-                break;
-            default:
-
+        for(Row row: rows){
+            sum += row.values[pos];
         }
 
         return sum;
@@ -125,44 +112,10 @@ public class DataSet implements Init,Cloneable {
     // sizeType can be : 1 or 2 otherwise it will return 0
     private double getAttributeMedian(int pos, int sizeType){
 
-        if(sizeType == PAIR) {
-
-            switch (pos) {
-                case 0:
-                    return (double) (rows.get(rows.size() / 2).getAttributeClass() + rows.get((rows.size() + 1) / 2).getAttributeClass()) / 2;
-                case 1:
-                    return (double) (rows.get(rows.size() / 2).getT3ResinUptakeTest() + rows.get((rows.size() + 1) / 2).getT3ResinUptakeTest()) / 2;
-                case 2:
-                    return (rows.get(rows.size() / 2).getSerumThyroxin() + rows.get((rows.size() + 1) / 2).getSerumThyroxin()) / 2;
-                case 3:
-                    return (rows.get(rows.size() / 2).getSerumTriiodothyronine() + rows.get((rows.size() + 1) / 2).getSerumTriiodothyronine()) / 2;
-                case 4:
-                    return (rows.get(rows.size() / 2).getTsh() + rows.get((rows.size() + 1) / 2).getTsh()) / 2;
-                case 5:
-                    return (rows.get(rows.size() / 2).getNewTsh() + rows.get((rows.size() + 1) / 2).getNewTsh()) / 2;
-                default:
-                    return 0;
-            }
-
-        }
-        else if(sizeType == ODD){
-            switch (pos) {
-                case 0:
-                    return rows.get(rows.size() / 2).getAttributeClass();
-                case 1:
-                    return rows.get(rows.size() / 2).getT3ResinUptakeTest();
-                case 2:
-                    return rows.get(rows.size() / 2).getSerumThyroxin();
-                case 3:
-                    return rows.get(rows.size() / 2).getSerumTriiodothyronine();
-                case 4:
-                    return rows.get(rows.size() / 2).getTsh();
-                case 5:
-                    return rows.get(rows.size() / 2).getNewTsh();
-                default:
-                    return 0;
-            }
-        }
+        if(sizeType == PAIR)
+            return (rows.get(rows.size() / 2).values[pos] + rows.get((rows.size() + 1) / 2).values[pos]) / 2;
+        else if (sizeType == ODD)
+            return rows.get(rows.size() / 2).values[pos];
         else
             return 0;
 
@@ -179,7 +132,6 @@ public class DataSet implements Init,Cloneable {
         }
 
         return lineSeries;
-
     }
 
     public XYChart.Series<String,Integer> getHistogramCount(int attrPosition){
@@ -223,9 +175,9 @@ public class DataSet implements Init,Cloneable {
             int cpt = 0;
 
             for(Row row : rows){
-                if(maxval == max && row.getValueByPosition(attrPosition)>= minval)
+                if(maxval == max && row.values[attrPosition] >= minval)
                     cpt++;
-                if(row.getValueByPosition(attrPosition) >= minval && row.getValueByPosition(attrPosition) < maxval){
+                if(row.values[attrPosition] >= minval && row.values[attrPosition] < maxval){
                     cpt++;
                 }
             }
@@ -242,7 +194,7 @@ public class DataSet implements Init,Cloneable {
         for(Double dbl : values){
             int cpt = 0;
             for(Row row : rows){
-                if(row.getValueByPosition(pos) == dbl){
+                if(row.values[pos] == dbl){
                     cpt++;
                 }
             }
@@ -258,8 +210,8 @@ public class DataSet implements Init,Cloneable {
         ArrayList<Double> temp = new ArrayList<>();
 
         for(Row row : rows){
-            if(!temp.contains(row.getValueByPosition(pos))){
-                temp.add(row.getValueByPosition(pos));
+            if(!temp.contains(row.values[pos])){
+                temp.add(row.values[pos]);
             }
         }
 
@@ -271,7 +223,7 @@ public class DataSet implements Init,Cloneable {
         XYChart.Series<Number, Number> series = new XYChart.Series<>();
 
         for(Row row : rows){
-            series.getData().add(new XYChart.Data<>(row.getValueByPosition(currPostion), row.getValueByPosition(yAttr)));
+            series.getData().add(new XYChart.Data<>(row.values[currPostion], row.values[yAttr]));
         }
 
         return series;
@@ -279,11 +231,11 @@ public class DataSet implements Init,Cloneable {
 
     public double getArrtibuteMin(int pos){
 
-        double min = rows.get(0).getValueByPosition(pos);
+        double min = rows.get(0).values[pos];
 
         for(Row row : rows) {
-            if(row.getValueByPosition(pos) < min)
-                min = row.getValueByPosition(pos);
+            if(row.values[pos] < min)
+                min = row.values[pos];
         }
 
         return min;
@@ -291,11 +243,11 @@ public class DataSet implements Init,Cloneable {
 
     public double getArrtibuteMax(int pos){
 
-        double max = rows.get(0).getValueByPosition(pos);
+        double max = rows.get(0).values[pos];
 
         for(Row row : rows) {
-            if(row.getValueByPosition(pos) > max)
-                max = row.getValueByPosition(pos);
+            if(row.values[pos] > max)
+                max = row.values[pos];
         }
 
         return max;
@@ -307,7 +259,7 @@ public class DataSet implements Init,Cloneable {
         ObservableList<Double> values = FXCollections.observableArrayList();
 
         for(Row row : rows)
-            values.add(row.getValueByPosition(currPostion));
+            values.add(row.values[currPostion]);
 
         return values;
 
@@ -321,7 +273,7 @@ public class DataSet implements Init,Cloneable {
         for(Row row : getRows()){
             sum = 0;
             for (int i = 1; i < 6; i++){
-                sum = sum + row.getValueByPosition(i);
+                sum = sum + row.values[i];
             }
             temp.add(sum/5);
         }
@@ -352,9 +304,9 @@ public class DataSet implements Init,Cloneable {
         }
 
         for(int i = 0; i < getRows().size(); i++) {
-            if(!discretedData.contains(getRows().get(i).getValueByPosition(pos))){
+            if(!discretedData.contains(getRows().get(i).values[pos])){
                 int cpt = 0;
-                while(discretedData.get(cpt) < getRows().get(i).getValueByPosition(pos) && cpt < discretedData.size()){
+                while(discretedData.get(cpt) < getRows().get(i).values[pos] && cpt < discretedData.size()){
                     cpt++;
                 }
 
@@ -363,8 +315,8 @@ public class DataSet implements Init,Cloneable {
                 else if(cpt == discretedData.size())
                     getRows().get(i).set(pos, discretedData.get(discretedData.size() - 1));
                 else{
-                    double minVal = getRows().get(i).getValueByPosition(pos) - discretedData.get(cpt - 1);
-                    double maxVal = discretedData.get(cpt) - getRows().get(i).getValueByPosition(pos);
+                    double minVal = getRows().get(i).values[pos] - discretedData.get(cpt - 1);
+                    double maxVal = discretedData.get(cpt) - getRows().get(i).values[pos];
                     if(minVal <= maxVal){
                         getRows().get(i).set(pos, discretedData.get(cpt - 1));
                     }
@@ -429,7 +381,7 @@ public class DataSet implements Init,Cloneable {
         for(Row row : this.rows){
             double sum = 0;
             for(int i = 1; i < 6; i++){
-                sum += row.getValueByPosition(i);
+                sum += row.values[i];
             }
             double val = sum / 5;
 
@@ -547,13 +499,13 @@ public class DataSet implements Init,Cloneable {
 
     public Row average() {
 
-        Row tmpOut = new Row();
+        Row tmpOut = new Row(numFeatures);
 
         for (int i = 0; i < 6; i++) {
             double sum=0;
 
             for (int j = 0; j < this.size(); j++) {
-                sum += this.getRows().get(j).getValueByPosition(i);
+                sum += this.getRows().get(j).values[i];
             }
             tmpOut.set (i, sum / this.size());
 
@@ -575,13 +527,6 @@ public class DataSet implements Init,Cloneable {
         double firstCost = getCostByClass(first, firstMean);
         double secondCost = getCostByClass(second, secondMean);
         double thirdCost = getCostByClass(third, thirdMean);
-
-
-        System.out.println(first.size());
-        System.out.println(firstMean);
-        System.out.println(secondMean);
-        System.out.println(thirdMean);
-        System.out.println(thirdCost);
     }
 
     private double getCostByClass(ObservableList<Row> temp, Row mean) {
@@ -600,13 +545,13 @@ public class DataSet implements Init,Cloneable {
 
         double globalSum;
         double localSum;
-        Row row = new Row();
+        Row row = new Row(numFeatures);
         row.set(0, classNumber);
         for(int i = 1; i < 6; i++) {
             localSum = 0;
             globalSum = 0;
             for (Row tmp : temp) {
-                localSum += tmp.getValueByPosition(i);
+                localSum += tmp.values[i];
             }
             globalSum += localSum / temp.size();
             row.set(i, globalSum);
@@ -620,7 +565,7 @@ public class DataSet implements Init,Cloneable {
         ObservableList<Row> temp = FXCollections.observableArrayList();
 
         for(Row row : rows){
-            if(row.getValueByPosition(0) == classNumber)
+            if(row.values[0] == classNumber)
                 temp.add(row);
         }
 

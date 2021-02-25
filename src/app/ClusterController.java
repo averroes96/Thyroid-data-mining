@@ -326,11 +326,11 @@ public class ClusterController implements Initializable,Init {
         double sum = 0;
 
         for(Row row : rows){
-            if(!classes.containsKey(row.getValueByPosition(0))){
-                classes.put(row.getValueByPosition(0), FXCollections.observableArrayList());
+            if(!classes.containsKey(row.values[0])){
+                classes.put(row.values[0], FXCollections.observableArrayList());
             }
             else
-                classes.get(row.getValueByPosition(0)).add(row);
+                classes.get(row.values[0]).add(row);
         }
 
         for(double cls : classes.keySet()){
@@ -356,7 +356,7 @@ public class ClusterController implements Initializable,Init {
 
     private double getFMeasure(ObservableList<Row> classRows, DataSet output){
 
-        double classNum = classRows.get(0).getValueByPosition(0);
+        double classNum = classRows.get(0).values[0];
         double precision = getPrecision(classNum, output);
         double recall = getRecall(output, classRows.size(), classNum);
 
@@ -368,7 +368,7 @@ public class ClusterController implements Initializable,Init {
 
         double sum = 0;
         for(Row row : output.getRows()){
-            if(row.getValueByPosition(0) == classNum)
+            if(row.values[0] == classNum)
                 sum++;
         }
 
@@ -379,7 +379,7 @@ public class ClusterController implements Initializable,Init {
 
         double sum = 0;
         for(Row row : output.getRows()){
-            if(row.getValueByPosition(0) == classNum)
+            if(row.values[0] == classNum)
                 sum++;
         }
 

@@ -63,16 +63,16 @@ public class Controller implements Initializable,Init {
     @FXML
     private ChoiceBox<String> attributeCB,yAttrCB;
 
-    private DataSet dataSet = new DataSet();
-    private DataSet discretData = new DataSet();
+    private DataSet dataSet;
+    private DataSet discretData;
     private ObservableList<String> attributesList = FXCollections.observableArrayList();
     private int currPostion = 0;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
-        getDataSet(dataSet);
-        getDataSet(discretData);
+        dataSet = getDataSet(dataSet);
+        discretData = getDataSet(discretData);
 
         valuesTAB.setId("selected-label");
         valuesTAB.setGraphic(getIcon("dist_primary.png"));
@@ -279,10 +279,10 @@ public class Controller implements Initializable,Init {
     }
 
     private String getDisplayedDataSet() throws IOException {
-        DataSet temp = new DataSet();
-        Parser parser = new Parser();
 
-        temp.setRows(parser.getRows("/ds/Thyroid_Dataset.txt"));
+        Parser parser = new Parser();
+        DataSet temp = new DataSet(parser.getRows("/ds/Thyroid_Dataset.txt"));
+
         StringBuilder stringBuilder = new StringBuilder();
         for(Row row : temp.getRows()){
             stringBuilder.append(row).append("\n");
@@ -448,14 +448,17 @@ public class Controller implements Initializable,Init {
         }
     }
 
-    private void getDataSet(DataSet ds) {
+    private DataSet getDataSet(DataSet ds) {
 
         Parser parser = new Parser();
         try {
-            ds.setRows(parser.getRows("/ds/Thyroid_Dataset.txt"));
+            ObservableList<Row> temp = parser.getRows("/ds/Thyroid_Dataset.txt");
+            ds = new DataSet(temp);
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        return ds;
 
     }
 

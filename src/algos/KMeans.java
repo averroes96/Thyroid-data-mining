@@ -118,11 +118,11 @@ public class KMeans implements Init {
 
         double sum;
 
-        Row centroids = new Row();
+        Row centroids = new Row(numFeatures);
         for (int i = 0; i < numFeatures; i++) {
             sum = 0.0;
             for(Row row : rows){
-                sum = sum + row.getValueByPosition(i);
+                sum = sum + row.values[i];
             }
             //System.out.println(i + " " + sum + " " + rows.size());
             centroids.set(i, sum / rows.size());
@@ -181,7 +181,7 @@ public class KMeans implements Init {
     public void display(){
 
         for (Row row : clusters.keySet()) {
-            System.out.print(row.getValueByPosition(0) + "\t \t");
+            System.out.print(row.values[0] + "\t \t");
             System.out.print(clusters.get(row) + "\n");
         }
 
