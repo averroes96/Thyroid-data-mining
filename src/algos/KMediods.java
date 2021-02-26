@@ -7,9 +7,6 @@ import inc.Row;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
-import javax.xml.crypto.Data;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Random;
 
 public class KMediods implements Init {

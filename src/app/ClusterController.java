@@ -148,20 +148,20 @@ public class ClusterController implements Initializable,Init {
         int maxN = maxNeighbors.getText().trim().isEmpty() ? 8 : Integer.parseInt(maxNeighbors.getText());
 
         CLARANS thyroidClarans = new CLARANS();
-        thyroidClarans.setMaxIters(maxIters);
-        thyroidClarans.setK(K);
-        thyroidClarans.setDistance(distance);
-        thyroidClarans.setMaxNeighbors(maxN);
+        thyroidClarans.maxIters = maxIters;
+        thyroidClarans.K = K;
+        thyroidClarans.distance = distance;
+        thyroidClarans.maxNeighbors = maxN;
         start = Instant.now();
         thyroidClarans.run(dataSet);
         end = Instant.now();
 
-        displayClusters(thyroidClarans.output, thyroidClarans.bestNode);
+        displayClusters(thyroidClarans.clusters, thyroidClarans.bestMedoids);
 
         runtime = Duration.between(start, end).toMillis();
         runtimeLabel.setText(runtime + " ms");
-        costLabel.setText(formatter.format(thyroidClarans.getMinCost()));
-        fmeasureLabel.setText(formatter.format(getGlobaleFMeasure(dataSet.getRows(), thyroidClarans.output)));
+        costLabel.setText(formatter.format(thyroidClarans.globalCost));
+        fmeasureLabel.setText(formatter.format(getGlobaleFMeasure(dataSet.getRows(), thyroidClarans.clusters)));
     }
 
     private void displayClusters(DataSet[] output, ObservableList<Row> centroids) throws IOException {

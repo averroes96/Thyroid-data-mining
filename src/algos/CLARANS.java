@@ -11,17 +11,17 @@ import java.util.Random;
 
 public class CLARANS implements Init {
 
-    private int K;
-    private Random rand;
-    private int maxIters;
-    private int maxNeighbors;
-    private double minCost;
-    private int distance;
-    private double totalCost;
+    public int K; // number of clusters
+    public Random rand;
+    public int maxIters; // max number of iterations
+    public int maxNeighbors; // max number of neighbors
+    public double globalCost; // best found cost
+    public int distance; // distance measure
+    public double localCost;
 
-    public ObservableList<Row> medoids = FXCollections.observableArrayList();
-    public ObservableList<Row> bestNode = FXCollections.observableArrayList();
-    public DataSet[] output;
+    public ObservableList<Row> medoids = FXCollections.observableArrayList(); // list of medoids
+    public ObservableList<Row> bestMedoids = FXCollections.observableArrayList(); // list of best medoids
+    public DataSet[] clusters;
 
     public CLARANS() {
         this(3, 100);
@@ -31,87 +31,38 @@ public class CLARANS implements Init {
         K = k;
         this.maxIters = maxIters;
         rand = new Random(System.currentTimeMillis());
-        this.distance = EUCLEDIAN;
-        output = new DataSet[k];
-        totalCost = 0;
-    }
-
-    public int getK() {
-        return K;
-    }
-
-    public void setK(int k) {
-        K = k;
-    }
-
-    public Random getRand() {
-        return rand;
-    }
-
-    public void setRand(Random rand) {
-        this.rand = rand;
-    }
-
-    public int getMaxIters() {
-        return maxIters;
-    }
-
-    public void setMaxIters(int maxIters) {
-        this.maxIters = maxIters;
-    }
-
-    public int getMaxNeighbors() {
-        return maxNeighbors;
-    }
-
-    public void setMaxNeighbors(int maxNeighbors) {
-        this.maxNeighbors = maxNeighbors;
-    }
-
-    public int getDistance() {
-        return distance;
-    }
-
-    public void setDistance(int distance) {
-        this.distance = distance;
-    }
-
-    public double getMinCost() {
-        return minCost;
-    }
-
-    public void setMinCost(double minCost) {
-        this.minCost = minCost;
+        distance = EUCLEDIAN;
+        clusters = new DataSet[k];
+        localCost = 0;
+        maxNeighbors = 0;
     }
 
     public void run(DataSet ds){
 
         int i = 0;
-        minCost = 9999;
-        bestNode = FXCollections.observableArrayList();
-        this.maxNeighbors = (int) Math.round(0.0125 * K * (ds.size() - K));
-        this.output = new DataSet[K];
+        globalCost = 999999999;
+        bestMedoids = FXCollections.observableArrayList();
+        clusters = new DataSet[K];
+        if(maxNeighbors == 0)
+            maxNeighbors = (int) Math.round(0.0125 * K * (ds.size() - K));
 
-        for(int c = 0; c < K; c++)
-            output[c] = new DataSet();
+        for(int c = 0; c < K; c++) // initialise the clusters
+            clusters[c] = new DataSet();
 
         while(i < maxIters){
 
-            //System.out.println("Iteration = " + i + " =======================================================");
             selectMedoids(ds);
-            totalCost = assignToClusters(ds, medoids);
-
-            //System.out.println("Total cost = " + totalCost);
+            localCost = assignToClusters(ds, medoids);
 
             int j = 0;
 
-            while(j < maxNeighbors){
+            while(j < maxNeighbors){ // enter the neighbors loop
 
                 int pos = rand.nextInt(medoids.size());
                 Row medoid = medoids.get(pos);
                 Row newMedoid;
-                if(output[pos].size() != 0)
-                    newMedoid = output[pos].getRows().get(rand.nextInt(output[pos].size()));
+                if(clusters[pos].size() != 0) // if cluster is empty try the nearest instant
+                    newMedoid = clusters[pos].getRows().get(rand.nextInt(clusters[pos].size()));
                 else
                     newMedoid = ds.kNearest(1, medoid, distance).iterator().next();
 
@@ -120,8 +71,8 @@ public class CLARANS implements Init {
                 double newCost = assignToClusters(ds, medoids);
                 //System.out.println("New cost = " + newCost);
 
-                if(newCost < totalCost)
-                    totalCost = newCost;
+                if(newCost < localCost)
+                    localCost = newCost;
                 else {
                     j++;
                     medoids.set(pos, medoid);
@@ -130,27 +81,17 @@ public class CLARANS implements Init {
 
             }
 
-            if(totalCost < minCost){
-                bestNode = medoids;
-                minCost = totalCost;
-                //System.out.println("Min Cost = " + minCost);
+            if(localCost < globalCost){
+                bestMedoids = medoids;
+                globalCost = localCost;
+                //System.out.println("Min Cost = " + globalCost);
             }
 
             i++;
 
-            //System.out.println("===================================================================================");
         }
 
-        assignToClusters(ds, bestNode);
-
-        //System.out.println("Best medoids==============================================");
-        /*for(Row row : bestNode){
-            System.out.println(row);
-        }*/
-        //System.out.println("===========================================================");
-
-        //System.out.println("Max Neighbors = " + maxNeighbors);
-        //System.out.println("Min cost = " + minCost);
+        assignToClusters(ds, bestMedoids);
 
     }
 
@@ -159,7 +100,7 @@ public class CLARANS implements Init {
         double cost = 0;
 
         for(int c = 0; c < K; c++)
-            output[c] = new DataSet();
+            clusters[c] = new DataSet();
 
         for (int i = 0; i < dataSet.getRows().size(); i++) {
 
@@ -175,7 +116,7 @@ public class CLARANS implements Init {
             }
 
             cost += bestDistance;
-            output[bestIndex].getRows().add(dataSet.getRows().get(i));
+            clusters[bestIndex].getRows().add(dataSet.getRows().get(i));
 
         }
 
