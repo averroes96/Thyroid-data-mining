@@ -27,6 +27,24 @@
          <children>
             <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" prefHeight="45.0" prefWidth="1068.0" spacing="8.0">
                <children>
+                  <JFXButton fx:id="uploadBtn" buttonType="RAISED" prefHeight="42.0" prefWidth="160.0" style="-fx-background-color: #003f5c;" text="Upload dataset" textFill="#eeeeee">
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <graphic>
+                        <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../icons/icons8_upload_32px_1.png" />
+                           </image>
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
+                        </ImageView>
+                     </graphic>
+                  </JFXButton>
                   <ImageView fx:id="informationIV" fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@../img/info_32.png" />
@@ -112,13 +130,6 @@
                                              <font>
                                                 <Font name="System Bold" size="16.0" />
                                              </font>
-                                             <graphic>
-                                                <ImageView>
-                                                   <image>
-                                                      <Image url="@../icons/icons8_mean_kinetic_temperature_32px_1.png" />
-                                                   </image>
-                                                </ImageView>
-                                             </graphic>
                                           </Label>
                                           <Label fx:id="meanLabel" alignment="CENTER" maxWidth="1.7976931348623157E308" prefHeight="48.0" text="Mean (Result)" textFill="#ff6361">
                                              <font>
@@ -129,13 +140,6 @@
                                              <font>
                                                 <Font name="System Bold" size="16.0" />
                                              </font>
-                                             <graphic>
-                                                <ImageView>
-                                                   <image>
-                                                      <Image url="@../icons/icons8_Select_Middle_Column_32px.png" />
-                                                   </image>
-                                                </ImageView>
-                                             </graphic>
                                           </Label>
                                           <Label fx:id="medianLabel" alignment="CENTER" maxWidth="1.7976931348623157E308" prefHeight="48.0" text="Median (Result)" textFill="#ff6361">
                                              <font>
@@ -146,13 +150,6 @@
                                              <font>
                                                 <Font name="System Bold" size="16.0" />
                                              </font>
-                                             <graphic>
-                                                <ImageView>
-                                                   <image>
-                                                      <Image url="@../icons/icons8_mean_kinetic_temperature_32px_1.png" />
-                                                   </image>
-                                                </ImageView>
-                                             </graphic>
                                           </Label>
                                           <Label fx:id="modeLabel" alignment="CENTER" maxWidth="1.7976931348623157E308" prefHeight="48.0" text="Mode (Result)" textFill="#ff6361">
                                              <font>

@@ -10,11 +10,20 @@ public class Parser {
 
 
     // Method for converting a benchmark into a graph
-    public  ObservableList<Row> getRows(String filePath) throws IOException {
+    public  ObservableList<Row> getRows(String filePath, boolean res) throws IOException {
 
 //        FileReader reader = new FileReader( filePath);
-        InputStream inputStream = getClass().getResourceAsStream(filePath) ;
-        BufferedReader br = new BufferedReader(new InputStreamReader(inputStream , StandardCharsets.UTF_8));
+        BufferedReader br;
+        if(res) {
+            InputStream inputStream = getClass().getResourceAsStream(filePath) ;
+            br = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
+            System.out.println("Resource");
+        }
+        else {
+            FileReader fileReader = new FileReader(new File(filePath));
+            br = new BufferedReader(fileReader);
+        }
+
         ObservableList<Row> rows = FXCollections.observableArrayList();
 
         // read line by line

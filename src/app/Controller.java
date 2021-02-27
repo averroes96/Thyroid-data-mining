@@ -19,6 +19,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import java.io.*;
@@ -31,10 +32,10 @@ public class Controller implements Initializable,Init {
     private ImageView informationIV,boxPlotIV;
 
     @FXML
-    private JFXButton displayBtn,clusteringBtn,aprioriBtn;
+    JFXButton displayBtn,clusteringBtn,aprioriBtn,uploadBtn;
 
     @FXML
-    private AnchorPane valuesAP,histoAP,scatterAP,boxPlotAP;
+    AnchorPane valuesAP,histoAP,scatterAP,boxPlotAP;
 
     @FXML
     LineChart<String,Integer> valuesLC;
@@ -66,23 +67,16 @@ public class Controller implements Initializable,Init {
     private DataSet dataSet;
     private DataSet discretData;
     private ObservableList<String> attributesList = FXCollections.observableArrayList();
-    private int currPostion = 0;
+    File selectedFile = null;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
-        dataSet = getDataSet(dataSet);
-        discretData = getDataSet(discretData);
+        dataSet = getDataSet("/ds/Thyroid_Dataset.txt", true);
+        discretData = getDataSet("/ds/Thyroid_Dataset.txt", true);
 
         valuesTAB.setId("selected-label");
         valuesTAB.setGraphic(getIcon("dist_primary.png"));
-
-        attributesList.addAll("Class attribute",
-                "T3-resin uptake test",
-                "Total Serum thyroxin",
-                "Total serum triiodothyronine",
-                "basal thyroid-stimulating hormone",
-                "Maximal absolute difference of TSH value");
 
         initAttrList(attributeCB, 0);
         initAttrList(yAttrCB, 5);
@@ -91,7 +85,6 @@ public class Controller implements Initializable,Init {
         getResults();
 
         attributeCB.setOnAction(action -> {
-            getSelectedPosition(attributeCB.getSelectionModel().getSelectedItem());
             initFields();
             getResults();
         });
@@ -107,6 +100,15 @@ public class Controller implements Initializable,Init {
         scatterTAB.setOnMouseClicked(this::selectTab);
 
         boxPlotTAB.setOnMouseClicked(this::selectTab);
+
+        uploadBtn.setOnAction(action -> {
+            uploadDataSet();
+
+            /*initAttrList(attributeCB, 0);
+            initAttrList(yAttrCB, 5);
+            initFields();
+            getResults();*/
+        });
 
         informationIV.setOnMouseClicked(action -> {
             InputStream in = getClass().getResourceAsStream("/ds/Thyroid_Dataset_Information.txt");
@@ -260,6 +262,22 @@ public class Controller implements Initializable,Init {
 
     }
 
+    private void uploadDataSet()
+    {
+        FileChooser fileChooser = new FileChooser();
+
+        fileChooser.getExtensionFilters().add(
+                new FileChooser.ExtensionFilter("Select a .TXT files", "*.txt")
+        );
+
+        selectedFile = fileChooser.showOpenDialog(uploadBtn.getScene().getWindow());
+
+        if (selectedFile != null) {
+            dataSet = getDataSet(selectedFile.getAbsolutePath(), false);
+        }
+
+    }
+
     private void startStage(FXMLLoader loader) {
         AnchorPane root = null;
         try {
@@ -281,7 +299,7 @@ public class Controller implements Initializable,Init {
     private String getDisplayedDataSet() throws IOException {
 
         Parser parser = new Parser();
-        DataSet temp = new DataSet(parser.getRows("/ds/Thyroid_Dataset.txt"));
+        DataSet temp = new DataSet(parser.getRows("/ds/Thyroid_Dataset.txt", true));
 
         StringBuilder stringBuilder = new StringBuilder();
         for(Row row : temp.getRows()){
@@ -292,22 +310,25 @@ public class Controller implements Initializable,Init {
     }
 
     private void initScatterChart() {
+
+        int index = attributeCB.getSelectionModel().getSelectedIndex();
+
         valuesSC.getData().clear();
-        double xAxisMin = dataSet.getArrtibuteMin(currPostion);
-        double xAxisMax = dataSet.getArrtibuteMax(currPostion);
+        double xAxisMin = dataSet.getArrtibuteMin(yAttrCB.getSelectionModel().getSelectedIndex());
+        double xAxisMax = dataSet.getArrtibuteMax(yAttrCB.getSelectionModel().getSelectedIndex());
         double xRange = (xAxisMax - xAxisMin)/10;
         xAxis.setLowerBound(xAxisMin);
         xAxis.setUpperBound(xAxisMax);
         xAxis.setTickUnit(xRange);
         xAxis.setLabel(attributeCB.getValue());
-        double yAxisMin = dataSet.getArrtibuteMin(getYAttr(yAttrCB.getValue()));
-        double yAxisMax = dataSet.getArrtibuteMax(getYAttr(yAttrCB.getValue()));
+        double yAxisMin = dataSet.getArrtibuteMin(index);
+        double yAxisMax = dataSet.getArrtibuteMax(index);
         double yRange = (yAxisMax - yAxisMin)/10;
         yAxis.setLowerBound(yAxisMin);
         yAxis.setUpperBound(yAxisMax);
         yAxis.setTickUnit(yRange);
         xAxis.setLabel(yAttrCB.getValue());
-        XYChart.Series<Number,Number> scatterSeries = dataSet.getScatterData(currPostion, getYAttr(yAttrCB.getValue()));
+        XYChart.Series<Number,Number> scatterSeries = dataSet.getScatterData(index, yAttrCB.getSelectionModel().getSelectedIndex());
         valuesSC.getData().add(scatterSeries);
 
 
@@ -392,39 +413,30 @@ public class Controller implements Initializable,Init {
                 32, 32, false, false));
     }
 
-    private void getSelectedPosition(String selectedItem) {
-
-        switch (selectedItem){
-            case "Class attribute": currPostion = 0; break;
-            case "T3-resin uptake test": currPostion = 1; break;
-            case "Total Serum thyroxin": currPostion = 2; break;
-            case "Total serum triiodothyronine": currPostion = 3; break;
-            case "basal thyroid-stimulating hormone": currPostion = 4; break;
-            case "Maximal absolute difference of TSH value": currPostion = 5; break;
-        }
-    }
-
     private void initFields() {
 
-        meanLabel.setText(String.valueOf(dataSet.calculateMean(currPostion)));
-        modeLabel.setText(String.valueOf(dataSet.calculateMode(currPostion)));
-        dataSet.setRows(Common.heapSort(dataSet.getRows(), currPostion));
-        medianLabel.setText(String.valueOf(dataSet.calculateMedian(currPostion)));
+        int index = attributeCB.getSelectionModel().getSelectedIndex();
+
+        meanLabel.setText(String.valueOf(dataSet.calculateMean(index)));
+        modeLabel.setText(String.valueOf(dataSet.calculateMode(index)));
+        dataSet.setRows(Common.heapSort(dataSet.getRows(), index));
+        medianLabel.setText(String.valueOf(dataSet.calculateMedian(index)));
 
     }
 
     private void getResults() {
 
-        dataSet.setRows(Common.heapSort(dataSet.getRows(), currPostion));
+        int index = attributeCB.getSelectionModel().getSelectedIndex();
+        dataSet.setRows(Common.heapSort(dataSet.getRows(), index));
         valuesLC.getData().clear();
         valuesBC.getData().clear();
         valuesSC.getData().clear();
-        XYChart.Series<String,Integer> lineSeries = dataSet.getOccurenceCount(currPostion);
-        XYChart.Series<String,Integer> barChartSeries = dataSet.getHistogramCount(currPostion);
+        XYChart.Series<String,Integer> lineSeries = dataSet.getOccurenceCount(index);
+        XYChart.Series<String,Integer> barChartSeries = dataSet.getHistogramCount(index);
         valuesBC.getData().add(barChartSeries);
         valuesLC.getData().add(lineSeries);
         initScatterChart();
-        initBoxPlot(currPostion);
+        initBoxPlot(index);
 
     }
 
@@ -435,28 +447,26 @@ public class Controller implements Initializable,Init {
                 boxPlotIV.getFitWidth(), boxPlotIV.getFitHeight(), false, false));
     }
 
-    private int getYAttr(String values) {
-
-        switch (values){
-            case "Class attribute": return 0;
-            case "T3-resin uptake test": return 1;
-            case "Total Serum thyroxin": return 2;
-            case "Total serum triiodothyronine": return 3;
-            case "basal thyroid-stimulating hormone": return 4;
-            case "Maximal absolute difference of TSH value": return 5;
-            default: return  -1;
-        }
-    }
-
-    private DataSet getDataSet(DataSet ds) {
+    private DataSet getDataSet(String filePath, boolean type) {
 
         Parser parser = new Parser();
+        DataSet ds = new DataSet();
         try {
-            ObservableList<Row> temp = parser.getRows("/ds/Thyroid_Dataset.txt");
+            ObservableList<Row> temp = parser.getRows(filePath, type);
             ds = new DataSet(temp);
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        System.out.println(attributesList.size());
+
+        ObservableList<String> temp = FXCollections.observableArrayList();
+
+        for(int i = 1; i <= ds.getNumFeatures(); i++){
+            temp.add("Attribute " + i);
+        }
+
+        attributesList = temp;
 
         return ds;
 
