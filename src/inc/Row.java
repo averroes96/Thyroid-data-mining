@@ -74,11 +74,11 @@ public class Row{
 
         StringBuilder temp = new StringBuilder();
 
-        for (int i = 0; i < nbrFeatures; i++){
+        for (int i = 1; i < nbrFeatures; i++){
             temp.append("I").append(i + 1).append("_").append(values[i]).append(" ");
         }
 
-        return temp.toString();
+        return temp.toString().substring(0, temp.length() - 1);
 
     }
 

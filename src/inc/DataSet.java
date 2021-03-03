@@ -513,6 +513,15 @@ public class DataSet implements Init,Cloneable {
         return tmpOut;
     }
 
+    public ArrayList<String> getTransactions(){
+
+        ArrayList<String> temp = new ArrayList<>();
+        for(Row row : rows)
+            temp.add(row.getTransaction());
+
+        return temp;
+    }
+
     public void getMinCost(){
 
         ObservableList<Row> first = getRowsByClass(1);

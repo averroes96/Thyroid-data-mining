@@ -146,8 +146,7 @@ public class Apriori {
         for(Map.Entry entry : frequentItems.entrySet()){
             System.out.println("Key: " + entry.getKey() + " Values: " + entry.getValue());
         }
-
-
+        
     }
 
     private boolean isCandidate(Integer integer) {

@@ -1,5 +1,6 @@
 package app;
 
+import algos.AprioriAlgorithm;
 import animatefx.animation.ZoomIn;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXDialog;
@@ -154,6 +155,17 @@ public class Controller implements Initializable,Init {
             FXMLLoader loader = new FXMLLoader(getClass().getResource( "Cluster.fxml"));
             startStage(loader);
         });
+
+        dataSet.discretize(0, 10);
+        dataSet.discretize(1, 10);
+        dataSet.discretize(2, 10);
+        dataSet.discretize(3, 10);
+        dataSet.discretize(4, 10);
+        dataSet.discretize(5, 10);
+
+        AprioriAlgorithm apriori = new AprioriAlgorithm(dataSet.getTransactions());
+        apriori.minSup = 11;
+        apriori.run();
 
         /*
         dataSet.discretize(0, 4);
