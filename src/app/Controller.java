@@ -164,7 +164,7 @@ public class Controller implements Initializable,Init {
         dataSet.discretize(5, 10);
 
         AprioriAlgorithm apriori = new AprioriAlgorithm(dataSet.getTransactions());
-        apriori.minSup = 11;
+        apriori.minSup = 2;
         apriori.run();
 
         /*

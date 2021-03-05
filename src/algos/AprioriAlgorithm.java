@@ -10,14 +10,14 @@ import java.util.StringTokenizer;
 public class AprioriAlgorithm {
 
     public ArrayList<String> transactions;
-    public HashMap<String, Integer> candidates, frequentItems;
+    public HashMap<String, Integer> candidates, freqItems, associationRules, tempFreqItems;
     public int minSup;
     public double minConfidence;
     int currItemset;
 
     public AprioriAlgorithm() {
         transactions = new ArrayList<>();
-        frequentItems = new HashMap<>();
+        freqItems = new HashMap<>();
         candidates = new HashMap<>();
         minSup = 0;
         minConfidence = 0;
@@ -25,7 +25,7 @@ public class AprioriAlgorithm {
 
     public AprioriAlgorithm(ArrayList<String> transactions) {
         this.transactions = transactions;
-        frequentItems = new HashMap<>();
+        freqItems = new HashMap<>();
         candidates = new HashMap<>();
         minSup = 0;
         minConfidence = 0;
@@ -40,37 +40,69 @@ public class AprioriAlgorithm {
     public void run(){
         
         candidates = initCandidates();
-        frequentItems = initFrequentItems();
+        initFrequentItems();
         currItemset = 1;
         /*System.out.println("Freq Items = " + frequentItems.size());
         for(String item : frequentItems.keySet())
             System.out.println(item + " => " + frequentItems.get(item));*/
 
         candidates = nCandidates();
-        frequentItems = nFreqItems();
+        nFreqItems();
 
+        candidates = nCandidates();
+        nFreqItems();
+
+        candidates = nCandidates();
+        nFreqItems();
+    /*
         candidates = nCandidates();
         frequentItems = nFreqItems();
 
-        System.out.println("Freq Items = " + frequentItems.size());
-        //for(String item : frequentItems.keySet())
-        //    System.out.println(item + " => " + frequentItems.get(item));
+        /*candidates = nCandidates();
+        nFreqItems();
 
-        /*while(frequentItems.size() > 1){
-            candidates = nCandidates();
-        }*/
+        candidates = nCandidates();
+        nFreqItems();
+
+        candidates = nCandidates();
+        nFreqItems();
+
+        candidates = nCandidates();
+        nFreqItems();*/
+
+        System.out.println("Freq Items = " + freqItems.size());;
+        for(String item : freqItems.keySet())
+            System.out.println(item + " => " + freqItems.get(item));
+
     }
 
-    private HashMap<String, Integer> nFreqItems() {
+    public void getAssociationRules(){
 
-        HashMap<String, Integer> temp = new HashMap<>();
+        for(Map.Entry<String, Integer> entry : freqItems.entrySet()){
+            //ArrayList<String> subsets = getItemSubsets(entry.getKey().split(" "), 0, 0, subsets);
+        }
+    }
 
-        for(Map.Entry<String, Integer> entry : candidates.entrySet()){
-            if(entry.getValue() > minSup)
-                temp.put(entry.getKey(), entry.getValue());
+    private void getItemSubsets(String[] key, int start, int end, ArrayList<String> temp) {
+
+        for(int i = 0; i < key.length; i++){
+
         }
 
-        return temp;
+    }
+
+    private void nFreqItems() {
+
+        tempFreqItems = new HashMap<>();
+        for(Map.Entry<String, Integer> entry : candidates.entrySet()){
+            if(entry.getValue() > minSup) {
+                freqItems.put(entry.getKey(), entry.getValue());
+                tempFreqItems.put(entry.getKey(), entry.getValue());
+            }
+        }
+
+        System.out.println("Temp Items = " + tempFreqItems.size());
+
     }
 
     private HashMap<String, Integer> nCandidates() {
@@ -81,16 +113,16 @@ public class AprioriAlgorithm {
 
         currItemset++;
         if(currItemset == 2){
-            for(Map.Entry<String, Integer> entry1 : frequentItems.entrySet()){
-                for(Map.Entry<String, Integer> entry2 : frequentItems.entrySet()){
+            for(Map.Entry<String, Integer> entry1 : tempFreqItems.entrySet()){
+                for(Map.Entry<String, Integer> entry2 : tempFreqItems.entrySet()){
                     if(!entry1.getKey().equals(entry2.getKey()))
                         temp.put(entry1.getKey() + " " + entry2.getKey(), 0);
                 }
             }
         }
         else{
-            for(Map.Entry<String, Integer> entry1 : frequentItems.entrySet()) {
-                for(Map.Entry<String, Integer> entry2 : frequentItems.entrySet()) {
+            for(Map.Entry<String, Integer> entry1 : tempFreqItems.entrySet()) {
+                for(Map.Entry<String, Integer> entry2 : tempFreqItems.entrySet()) {
                     s1 = "";
                     s2 = "";
 
@@ -122,16 +154,17 @@ public class AprioriAlgorithm {
         for(Map.Entry<String, Integer> entry : temp.entrySet()) {
             //System.out.println(candidate);
             String[] candItems = entry.getKey().split(" ");
-            int cpt = 0;
+            int cpt;
             for (String transaction : transactions) {
                 //System.out.println(transaction);
+                cpt = 0;
                 String[] items = transaction.split(" ");
-                    for (String item1 : candItems) {
+                    for (String item1 : items) {
                         //System.out.println("Token => " + token);
-                        for (String item : items) {
+                        for (String item : candItems) {
                             //System.out.println(item);
                             if (item.equals(item1)){
-                                //System.out.println(item);
+                                //System.out.println(item + " == " + item1);
                                 cpt++;
                             }
                         }
@@ -140,24 +173,29 @@ public class AprioriAlgorithm {
                     }
                 //System.out.println(count);
                 if (cpt == size) {
+                    //System.out.println(transaction);
+                    //System.out.println(entry.getKey());
                     //System.out.println(cpt);
-                    //System.out.println(tokenizer.countTokens());
+                    //System.out.println(size);
                     temp.put(entry.getKey(), entry.getValue() + 1);
                 }
             }
         }
     }
 
-    private HashMap<String, Integer> initFrequentItems() {
+    private void initFrequentItems() {
 
-        HashMap<String, Integer> temp = new HashMap<>();
+        tempFreqItems = new HashMap<>();
 
         for(String candidate : candidates.keySet()){
-            if(candidates.get(candidate) > minSup)
-                temp.put(candidate, candidates.get(candidate));
+            if(candidates.get(candidate) > minSup) {
+                freqItems.put(candidate, candidates.get(candidate));
+                tempFreqItems.put(candidate, candidates.get(candidate));
+            }
         }
 
-        return temp;
+        System.out.println("Temp Items = " + tempFreqItems.size());
+
     }
 
     private HashMap<String, Integer> initCandidates() {
@@ -174,6 +212,15 @@ public class AprioriAlgorithm {
         }
 
         return temp;
+    }
+
+    private boolean isMoreThanMin(){
+
+        for(Map.Entry<String, Integer> entry : candidates.entrySet()){
+            if(entry.getValue() > minSup)
+                return true;
+        }
+        return false;
     }
 
 
