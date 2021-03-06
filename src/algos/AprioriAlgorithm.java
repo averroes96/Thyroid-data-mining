@@ -2,10 +2,8 @@ package algos;
 
 import inc.Row;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.StringTokenizer;
+import java.lang.reflect.Array;
+import java.util.*;
 
 public class AprioriAlgorithm {
 
@@ -38,14 +36,14 @@ public class AprioriAlgorithm {
     }
 
     public void run(){
-        
+  /*
         candidates = initCandidates();
         initFrequentItems();
         currItemset = 1;
         /*System.out.println("Freq Items = " + frequentItems.size());
         for(String item : frequentItems.keySet())
             System.out.println(item + " => " + frequentItems.get(item));*/
-
+/*
         candidates = nCandidates();
         nFreqItems();
 
@@ -54,7 +52,7 @@ public class AprioriAlgorithm {
 
         candidates = nCandidates();
         nFreqItems();
-    /*
+        /*
         candidates = nCandidates();
         frequentItems = nFreqItems();
 
@@ -70,9 +68,21 @@ public class AprioriAlgorithm {
         candidates = nCandidates();
         nFreqItems();*/
 
-        System.out.println("Freq Items = " + freqItems.size());;
+        /*System.out.println("Freq Items = " + freqItems.size());
         for(String item : freqItems.keySet())
-            System.out.println(item + " => " + freqItems.get(item));
+            System.out.println(item + " => " + freqItems.get(item));*/
+
+        String temp = "A B C D E F";
+        String arr[] = temp.split(" ");
+        int r = 5;
+        int n = arr.length;
+        String[] data = new String[r];
+        ArrayList<String> tempList = new ArrayList<>();
+        tempList = combinationUtil(arr, data, 0, n-1, 0, r, tempList) ;
+        //checkSubElements(temp);
+
+        for(String str : tempList)
+            System.out.println(str);
 
     }
 
@@ -138,13 +148,45 @@ public class AprioriAlgorithm {
 
                     if(s2.compareToIgnoreCase(s1)==0) {
                         String addString = (s1 + " " + strToken1.nextToken() + " " + strToken2.nextToken()).trim();
-                        temp.put(addString, 0);
+                        if (checkSubElements(addString))
+                            temp.put(addString, 0);
                     }
                 }
             }
         }
 
         candidateFreq(temp, currItemset);
+
+        return temp;
+    }
+
+    private boolean checkSubElements(String addString) {
+
+        return true;
+    }
+
+    private ArrayList<String> combinationUtil(String arr[], String data[], int start, int end, int index, int r, ArrayList<String> temp){
+
+        // Current combination is ready to be printed, print it
+        if (index == r)
+        {
+            String str = "";
+            for (int j=0; j<r; j++)
+                str += data[j] + " ";
+
+            temp.add(str.trim());
+            return temp;
+        }
+
+        // replace index with all possible elements. The condition
+        // "end-i+1 >= r-index" makes sure that including one element
+        // at index will make a combination with remaining elements
+        // at remaining positions
+        for (int i=start; i<=end && end-i+1 >= r-index; i++)
+        {
+            data[index] = arr[i];
+            combinationUtil(arr, data, i+1, end, index+1, r, temp);
+        }
 
         return temp;
     }
