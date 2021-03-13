@@ -288,14 +288,23 @@ public class DataSet implements Init,Cloneable {
 
     }
 
+    public void discretizeByInterval(int pos, int size){
+
+        ObservableList<Double> values = Common.heapSort(getValuesByPosition(pos));
+        intervalPartition(values);
+
+    }
+
+    private void intervalPartition(ObservableList<Double> values) {
+
+    }
+
     public void discretize(int pos, int binSize){
 
         ObservableList<Double> values = Common.heapSort(getValuesByPosition(pos));
 
-        HashMap<Integer, ArrayList<Double>> bins;
+        HashMap<Integer, ArrayList<Double>> bins = equalFrequencyPartition(values, binSize);;
         ObservableList<Double> discretedData = FXCollections.observableArrayList();
-
-        bins = equalFrequencyPartition(values, binSize);
 
         smoothingByBounderies(bins);
 

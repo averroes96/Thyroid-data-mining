@@ -134,3 +134,26 @@
     -fx-stroke: #ff6361;
 }
 
+#menu-btn{
+    -fx-background-color: transparent;
+    -fx-text-fill: #003f5c;
+    -fx-border-width: 0 0 1 0;
+    -fx-border-color: #ffa600;
+}
+
+#menu-btn:hover{
+    -fx-background-color: #003f5c;
+    -fx-text-fill: #eee;
+}
+
+#menu-btn-selected{
+    -fx-background-color: #003f5c;
+    -fx-text-fill: #eee;
+    -fx-border-width: 0 0 1 0;
+    -fx-border-color: #ffa600;
+}
+
+.rounded-btn{
+    -fx-background-radius: 16;
+}
+

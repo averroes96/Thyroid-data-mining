@@ -8,6 +8,7 @@ import com.jfoenix.controls.JFXScrollPane;
 import inc.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -30,13 +31,13 @@ import java.util.ResourceBundle;
 public class Controller implements Initializable,Init {
 
     @FXML
-    private ImageView informationIV,boxPlotIV;
+    ImageView boxPlotIV;
 
     @FXML
-    JFXButton displayBtn,clusteringBtn,aprioriBtn,uploadBtn;
+    JFXButton displayBtn,clusteringBtn,aprioriBtn,uploadBtn,overviewBtn,infoBtn;
 
     @FXML
-    AnchorPane valuesAP,histoAP,scatterAP,boxPlotAP;
+    AnchorPane valuesAP,histoAP,scatterAP,boxPlotAP,overviewAP,clusterAP,aprioriAP;
 
     @FXML
     LineChart<String,Integer> valuesLC;
@@ -111,7 +112,7 @@ public class Controller implements Initializable,Init {
             getResults();*/
         });
 
-        informationIV.setOnMouseClicked(action -> {
+        infoBtn.setOnAction(action -> {
             InputStream in = getClass().getResourceAsStream("/ds/Thyroid_Dataset_Information.txt");
             BufferedReader reader = new BufferedReader(new InputStreamReader(in));
             StringBuilder text = new StringBuilder();
@@ -144,142 +145,20 @@ public class Controller implements Initializable,Init {
             scrollPane.setContent(stackPane);
         });
 
-        aprioriBtn.setOnAction(action -> {
+        overviewBtn.setOnAction(this::selectMenu);
+        overviewBtn.setId("menu-btn-selected");
 
-            FXMLLoader loader = new FXMLLoader(getClass().getResource( "Apriori.fxml"));
-            startStage(loader);
-        });
+        aprioriBtn.setOnAction(this::selectMenu);
 
-        clusteringBtn.setOnAction(action -> {
-
-            FXMLLoader loader = new FXMLLoader(getClass().getResource( "Cluster.fxml"));
-            startStage(loader);
-        });
-
-        dataSet.discretize(0, 10);
-        dataSet.discretize(1, 10);
-        dataSet.discretize(2, 10);
-        dataSet.discretize(3, 10);
-        dataSet.discretize(4, 10);
-        dataSet.discretize(5, 10);
-
-        AprioriAlgorithm apriori = new AprioriAlgorithm(dataSet.getTransactions());
-        apriori.minSup = 2;
-        apriori.run();
-
-        /*
-        dataSet.discretize(0, 4);
-        dataSet.discretize(1, 4);
-        dataSet.discretize(2, 4);
-        dataSet.discretize(3, 4);
-        dataSet.discretize(4, 4);
-        dataSet.discretize(5, 4);*/
-
-        //dataSet.IQR();
-
-        /*KMediods thyroidKMediods = new KMediods();
-        DataSet[] clusters = thyroidKMediods.run(dataSet);
-        int k = 1;
-        for(DataSet ds : clusters){
-            System.out.println("Cluster = " + k + " Size = " + ds.size());
-            for(Row row : ds.getRows())
-                System.out.println(row);
-            k++;
-        }*/
-
-        /*int k = 1;
-        CLARANS thyroidClarans = new CLARANS();
-        thyroidClarans.setMaxIters(1000);
-        thyroidClarans.run(dataSet);
-
-        DataSet[] result = thyroidClarans.output;
-
-        for(DataSet ds : result){
-            System.out.println("Cluster " + k + " = " + ds.size());
-            for(Row row : ds.getRows()){
-                System.out.println(row);
-            }
-            k++;
-        }*/
-
-        /*
-
-        discretData.discretize(1, 4);
-
-
-        Apriori apriori = new Apriori();
-        apriori.setDataSet(discretData);
-        apriori.setMinSup(4);
-        HashMap<String, Integer> candidates = new HashMap<>();
-        for (Row row : discretData.getRows()){
-
-            for(String str : row.getAllValues()){
-                if(!candidates.containsKey(str)){
-                    candidates.put(str, 1);
-                }
-                else
-                    candidates.put(str, candidates.get(str) + 1);
-            }
-        }
-        apriori.setCandidateItems(candidates);
-        apriori.run();*/
-
-
-        /*
-        for(double val : Common.heapSort(dataSet.normalizedData())){
-            System.out.println(val);
-        }
-
-
-        KMeans thyroidKMeans = new KMeans();
-        thyroidKMeans.setDataSet(dataSet);
-        thyroidKMeans.setK(3);
-        thyroidKMeans.setMaxIters(100);
-        thyroidKMeans.setNumFeatures(6);
-        thyroidKMeans.setDistance(EUCLEDIAN);
-        thyroidKMeans.initiateCentroids();
-        thyroidKMeans.run();
-        thyroidKMeans.display();
-
-        /*
-        discretData.discretize(2, 5);
-
-        System.out.println("Cloned:\n\n");
-        for(Row row : discretData.getRows()){
-            System.out.println(row.getValueByPosition(2));
-        }
-
-        System.out.println("Original:\n\n");
-        for(Row row : dataSet.getRows()){
-            System.out.println(row.getValueByPosition(2));
-        }*/
-
-        //dataSet.getMinCost();
-
-
-        /*
-        dataSet.discretize(1, 10);
-        dataSet.discretize(2, 10);
-        dataSet.discretize(3, 10);
-        dataSet.discretize(4, 10);
-        dataSet.discretize(5, 10);
-
-        Apriori4j apriori = new Apriori4j();
-        ArrayList<String> transactions = new ArrayList<>();
-        for(Row row : dataSet.getRows())
-            transactions.add(row.getTransaction());
-        int minSup = 2;
-        double minConf = 0.40;
-        apriori.display(transactions.size(), transactions, minSup, minConf);*/
+        clusteringBtn.setOnAction(this::selectMenu);
 
     }
 
-    private void uploadDataSet()
-    {
+    private void uploadDataSet() {
         FileChooser fileChooser = new FileChooser();
 
         fileChooser.getExtensionFilters().add(
-                new FileChooser.ExtensionFilter("Select a .TXT files", "*.txt")
+                new FileChooser.ExtensionFilter(".TXT files", "*.txt")
         );
 
         selectedFile = fileChooser.showOpenDialog(uploadBtn.getScene().getWindow());
@@ -288,24 +167,6 @@ public class Controller implements Initializable,Init {
             dataSet = getDataSet(selectedFile.getAbsolutePath(), false);
         }
 
-    }
-
-    private void startStage(FXMLLoader loader) {
-        AnchorPane root = null;
-        try {
-            root = loader.load();
-            ClusterController cc = loader.getController();
-            cc.setDataSet(dataSet);
-            cc.originalRows = dataSet.getRows();
-        } catch (IOException exception) {
-            exception.printStackTrace();
-        }
-
-        Scene scene = new Scene(root);
-        scene.setFill(javafx.scene.paint.Color.TRANSPARENT);
-        Stage stage = new Stage();
-        stage.setScene(scene);
-        stage.show();
     }
 
     private String getDisplayedDataSet() throws IOException {
@@ -344,6 +205,39 @@ public class Controller implements Initializable,Init {
         valuesSC.getData().add(scatterSeries);
 
 
+    }
+
+    private void selectMenu(ActionEvent event){
+
+        if(event.getSource() == overviewBtn){
+            overviewBtn.setId("menu-btn-selected");
+            aprioriBtn.setId("menu-btn");
+            clusteringBtn.setId("menu-btn");
+
+            overviewAP.setVisible(true);
+            aprioriAP.setVisible(false);
+            clusterAP.setVisible(false);
+        }
+
+        if(event.getSource() == aprioriBtn){
+            overviewBtn.setId("menu-btn");
+            aprioriBtn.setId("menu-btn-selected");
+            clusteringBtn.setId("menu-btn");
+
+            overviewAP.setVisible(false);
+            aprioriAP.setVisible(true);
+            clusterAP.setVisible(false);
+        }
+
+        if(event.getSource() == clusteringBtn){
+            overviewBtn.setId("menu-btn");
+            aprioriBtn.setId("menu-btn");
+            clusteringBtn.setId("menu-btn-selected");
+
+            overviewAP.setVisible(false);
+            aprioriAP.setVisible(false);
+            clusterAP.setVisible(true);
+        }
     }
 
     private void selectTab(MouseEvent action) {

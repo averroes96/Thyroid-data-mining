@@ -10,5 +10,6 @@
     <orderEntry type="library" name="com.jfoenix:jfoenix:8.0.8" level="project" />
     <orderEntry type="library" name="io.github.typhon0:AnimateFX:1.2.1" level="project" />
     <orderEntry type="library" name="fontawesomefx-8.9" level="project" />
+    <orderEntry type="library" name="commons-collections4-4.4" level="project" />
   </component>
 </module>
