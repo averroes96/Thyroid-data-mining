@@ -1,5 +1,6 @@
 package algos;
 
+import inc.AssociationRule;
 import inc.Row;
 import org.apache.commons.collections4.ListUtils;
 
@@ -9,7 +10,9 @@ import java.util.*;
 public class AprioriAlgorithm {
 
     public ArrayList<String> transactions;
-    public HashMap<String, Integer> candidates, freqItems, associationRules, currFreqItems,prevFreqItems;
+    public ArrayList<AssociationRule> associationRules;
+    public HashMap<String, Integer> candidates, freqItems, currFreqItems,prevFreqItems;
+    public HashMap<String, Double> rulesMap;
     public int minSup;
     public double minConfidence;
     int currItemset;
@@ -45,51 +48,74 @@ public class AprioriAlgorithm {
         for(String item : frequentItems.keySet())
             System.out.println(item + " => " + frequentItems.get(item));*/
 
+        while(isMoreThanMin()){
+            candidates = nCandidates();
+            nFreqItems();
+        }
+
         System.out.println("Candidates = " + candidates.size());
 
-        candidates = nCandidates();
-        nFreqItems();
-
-        System.out.println("Candidates = " + candidates.size());
-
-        System.out.println("Prev Items = " + prevFreqItems.size());
-        for(String item : prevFreqItems.keySet())
-            System.out.println(item + " => " + prevFreqItems.get(item));
-
-        System.out.println("============================================================================================");
+        System.out.println("====================================================");
 
         System.out.println("Curr Items = " + currFreqItems.size());
         for(String item : currFreqItems.keySet())
             System.out.println(item + " => " + currFreqItems.get(item));
 
-        candidates = nCandidates();
-        nFreqItems();
+        System.out.println("====================================================");
 
-        System.out.println("Candidates = " + candidates.size());
-        for(String item : candidates.keySet())
-            System.out.println(item + " => " + candidates.get(item));
-
-        System.out.println("Prev Items = " + prevFreqItems.size());
-        for(String item : prevFreqItems.keySet())
-            System.out.println(item + " => " + prevFreqItems.get(item));
-
-        System.out.println("============================================================================================");
-
-        System.out.println("Curr Items = " + currFreqItems.size());
-        for(String item : currFreqItems.keySet())
-            System.out.println(item + " => " + currFreqItems.get(item));
-
-
-        /*System.out.println("Freq Items = " + freqItems.size());
+        System.out.println("Freq Items = " + freqItems.size());
         for(String item : freqItems.keySet())
-            System.out.println(item + " => " + freqItems.get(item));*/
+            System.out.println(item + " => " + freqItems.get(item));
 
+        getAssociationRules();
+
+        System.out.println("====================================================");
+        System.out.println("Number of rules = " + associationRules.size());
+        for(AssociationRule rule : associationRules){
+            System.out.println(rule);
+        }
     }
 
     public void getAssociationRules(){
 
-        for(Map.Entry<String, Integer> entry : freqItems.entrySet()){
-            //ArrayList<String> subsets = getItemSubsets(entry.getKey().split(" "), 0, 0, subsets);
+        associationRules = new ArrayList<>();
+
+        for(Map.Entry<String, Integer> entry1 : freqItems.entrySet()){
+            String arr[] = entry1.getKey().split(" ");
+            int r = arr.length - 1;
+            int n = arr.length;
+            if (n > 1) {
+                String[] data = new String[r];
+                ArrayList<String> subsets = new ArrayList<>();
+                combinationUtil(arr, data, 0, n - 1, 0, r, subsets);
+                for(String subset : subsets){
+                    System.out.println(subset + " is a " + entry1.getKey());
+                    checkConfidence(subset, entry1);
+                }
+            }
+        }
+
+        rulesMap = new HashMap<>();
+        for(AssociationRule rule : associationRules){
+            rulesMap.put(rule.left + " -> " + rule.right, rule.confidence);
+        }
+    }
+
+    private void checkConfidence(String subset, Map.Entry<String, Integer> set) {
+
+        for(Map.Entry<String, Integer> entry2 : freqItems.entrySet()){
+            if(strEqual(subset.split(" "), entry2.getKey().split(" "))){
+                System.out.println(subset + " == " + entry2.getKey());
+                double confidence = (float)set.getValue() / entry2.getValue();
+                if(confidence >= minConfidence) {
+                    String left = entry2.getKey();
+                    String right = set.getKey();
+                    int support = set.getValue();
+                    AssociationRule rule = new AssociationRule(left, right, confidence, support);
+                    associationRules.add(rule);
+                    break;
+                }
+            }
         }
     }
 
@@ -212,7 +238,7 @@ public class AprioriAlgorithm {
 
     private boolean strEqual(String[] firstList, String[] secondList) {
 
-        int len = firstList.length;
+        int len = secondList.length;
         int cpt = 0;
 
         for(String second : secondList){

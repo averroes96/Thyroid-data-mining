@@ -81,6 +81,7 @@ public class KMeans implements Init {
 
         for(int i = 0; i < k; i++){
             Random rand = new Random();
+            System.out.println(dataSet.getRows().size());
             int randInt = rand.nextInt(dataSet.getRows().size());
             centroids.put(i, dataSet.getRows().get(randInt));
         }
