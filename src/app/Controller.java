@@ -1,5 +1,6 @@
 package app;
 
+import algos.Apriori;
 import algos.CLARANS;
 import algos.KMeans;
 import algos.KMediods;
@@ -16,6 +17,9 @@ import javafx.scene.Node;
 import javafx.scene.chart.*;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -39,7 +43,7 @@ public class Controller implements Initializable,Init {
     ImageView boxPlotIV;
 
     @FXML
-    JFXButton displayBtn,clusteringBtn,aprioriBtn,uploadBtn,overviewBtn,infoBtn,runBtn;
+    JFXButton displayBtn,clusteringBtn,aprioriBtn,uploadBtn,overviewBtn,infoBtn,runBtn,rulesTAB,freqsTAB,runAprioriBtn;
 
     @FXML
     AnchorPane valuesAP,histoAP,scatterAP,boxPlotAP,overviewAP,clusterAP,aprioriAP;
@@ -66,7 +70,7 @@ public class Controller implements Initializable,Init {
     JFXScrollPane scrollPane;
 
     @FXML
-    JFXTextField ncKmeans,maxItersKmeans,ncKmedoids,maxItersKmedoids,ncClarans,maxItersClarans,maxNeighbors;
+    JFXTextField ncKmeans,maxItersKmeans,ncKmedoids,maxItersKmedoids,ncClarans,maxItersClarans,maxNeighbors,supportTF,binSizeTF,intervalTF;
 
     @FXML
     Label meanLabel,medianLabel,modeLabel,histogramTAB,valuesTAB,scatterTAB,boxPlotTAB,kmeans,kmedoids,clarans,costLabel,fmeasureLabel,runtimeLabel;
@@ -79,6 +83,31 @@ public class Controller implements Initializable,Init {
 
     @FXML
     JFXToggleButton outliers;
+
+    @FXML
+    TableView<FrequentItem> freqItemsTable;
+
+    @FXML
+    TableView<AssociationRule> rulesTV;
+
+    @FXML
+    TableColumn<FrequentItem, String> nameTC;
+
+    @FXML
+    TableColumn<FrequentItem, Integer> supportTC;
+
+    @FXML
+    TableColumn<AssociationRule, String> antecedTC,conseqTC;
+
+    @FXML
+    TableColumn<AssociationRule, Integer> ruleSupportTC;
+
+    @FXML
+    TableColumn<AssociationRule, Double> confidenceTC;
+
+    @FXML
+    JFXSlider confidenceSlider;
+
 
     DataSet dataSet;
     DataSet discretData;
@@ -225,6 +254,78 @@ public class Controller implements Initializable,Init {
         Common.controlDigitField(maxItersKmedoids);
         Common.controlDigitField(maxNeighbors);
 
+        // ================================================== APRIORI TAB ===========================================================
+
+        initSlider(confidenceSlider);
+        initTables();
+        supportTF.setText("3");
+        binSizeTF.setText("4");
+        intervalTF.setText("10");
+        
+        freqsTAB.setOnAction(this::aprioriSelect);
+        rulesTAB.setOnAction(this::aprioriSelect);
+
+        runAprioriBtn.setOnAction(action -> {
+            runApriori();
+        });
+
+        Common.controlDigitField(supportTF);
+
+    }
+
+    private void initTables() {
+
+        nameTC.setCellValueFactory(new PropertyValueFactory<>("name"));
+        supportTC.setCellValueFactory(new PropertyValueFactory<>("support"));
+
+        antecedTC.setCellValueFactory(new PropertyValueFactory<>("left"));
+        conseqTC.setCellValueFactory(new PropertyValueFactory<>("right"));
+        confidenceTC.setCellValueFactory(new PropertyValueFactory<>("confidence"));
+        ruleSupportTC.setCellValueFactory(new PropertyValueFactory<>("support"));
+    }
+
+    private void initSlider(JFXSlider slider) {
+
+        slider.valueProperty().addListener((obs,oldVal,newVal)->{
+            slider.setValue(newVal.intValue());
+        });
+    }
+
+    private void runApriori() {
+
+        double confidence = confidenceSlider.getValue()/100;
+        int minSup = Integer.parseInt(supportTF.getText());
+        int interval = Integer.parseInt(intervalTF.getText());
+
+        for(int i = 0; i < discretData.getNumFeatures(); i++){
+            discretData.discretize(i, interval);
+        }
+
+        Apriori apriori = new Apriori(discretData.getTransactions(), minSup, confidence);
+        apriori.run();
+
+        freqItemsTable.setItems(apriori.frequentItems);
+        rulesTV.setItems(apriori.associationRules);
+    }
+
+    private void aprioriSelect(ActionEvent action) {
+
+        if(action.getSource() == freqsTAB){
+
+            freqsTAB.setId("apriori-btn-selected");
+            rulesTAB.setId("apriori-btn");
+
+            freqItemsTable.setVisible(true);
+            rulesTV.setVisible(false);
+        }
+        if(action.getSource() == rulesTAB){
+
+            freqsTAB.setId("apriori-btn");
+            rulesTAB.setId("apriori-btn-selected");
+
+            freqItemsTable.setVisible(false);
+            rulesTV.setVisible(true);
+        }
     }
 
     private void initStyle() {

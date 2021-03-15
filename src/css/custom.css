@@ -1,4 +1,5 @@
 
+
 .choice-box {
 
     -fx-background-color: white;
@@ -90,7 +91,7 @@
 
 .scroll-bar:horizontal .thumb,
 .scroll-bar:vertical .thumb {
-    -fx-background-color: #ffa600;
+    -fx-background-color: #003f5c;
     -fx-background-radius: 5em;
 }
 
@@ -142,8 +143,7 @@
 }
 
 #menu-btn:hover{
-    -fx-background-color: #003f5c;
-    -fx-text-fill: #eee;
+    -fx-background-color: #c9c9c9;
 }
 
 #menu-btn-selected{
@@ -153,7 +153,105 @@
     -fx-border-color: #ffa600;
 }
 
+#apriori-btn{
+    -fx-background-color: transparent;
+    -fx-text-fill: #003f5c;
+}
+
+#apriori-btn:hover{
+    -fx-background-color: #c9c9c9;
+}
+
+#apriori-btn-selected{
+    -fx-background-color: #ffa600;
+    -fx-text-fill: #003f5c;
+}
+
 .rounded-btn{
     -fx-background-radius: 16;
 }
 
+.table-view .column-header,
+.table-view .column-header-background .filler {
+    -fx-background-color:  #003f5c;
+    -fx-size:48;
+    -fx-background-radius: 16 16 0 0;
+}
+
+.table-view .column-header-background{
+    -fx-background-radius: 16;
+}
+
+.table-view .column-header .label{
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-alignment: CENTER;
+}
+.table-view .cell{
+    -fx-cell-size: 32;
+    -fx-background-color: white;
+    -fx-border-color: #ddd;
+    -fx-text-fill: #003f5c;
+    -fx-alignment: CENTER;
+
+}
+.table-row-cell:selected {
+    -fx-background-color: whitesmoke;
+    -fx-text-background-color:  #ffa600;
+
+
+}
+
+/* scroll bar starts here */
+
+/* The increment and decrement button CSS class of scrollbar */
+.table-view .increment-button ,.table-view .decrement-button {
+    -fx-background-color:transparent;
+    -fx-background-radius: 2em;
+
+}
+
+/* The main scrollbar **track** CSS class  */
+.table-view .scroll-bar:horizontal .track,
+.table-view .scroll-bar:vertical .track{
+    -fx-background-color: transparent;
+    -fx-border-color:derive( #003f5c,80%);
+
+    -fx-background-radius: 2em;
+    -fx-border-radius:2em;
+}
+
+/* The main scrollbar **thumb** CSS class which we drag every time (movable) */
+.table-view .scroll-bar:horizontal .thumb,
+.table-view .scroll-bar:vertical .thumb {
+    -fx-background-color:derive( #003f5c,90%);
+    -fx-background-insets: 2, 0, 0;
+    -fx-background-radius: 2em;
+
+}
+
+/* Styling the slider track */
+.jfx-slider > .track {
+    -fx-background-color: #ddd;
+}
+
+/* Styling the slider thumb */
+.jfx-slider > .thumb {
+    -fx-background-color: #ffa600;
+}
+
+/* Styling the filled track */
+.jfx-slider > .colored-track {
+    -fx-background-color: #ffa600;
+}
+
+/* Styling the animated thumb */
+.jfx-slider > .animated-thumb {
+    -fx-background-color: #ffa600;
+}
+
+/* Styling the slider value text inside animated thumb */
+.jfx-slider .slider-value {
+    -fx-fill: white;
+    -fx-stroke: white;
+}
