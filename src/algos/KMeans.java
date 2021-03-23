@@ -20,7 +20,7 @@ public class KMeans implements Init {
     int numFeatures;
     DataSet dataSet;
     HashMap<Integer, Row> centroids = new HashMap<>();
-    HashMap<Row, Integer> clusters = new HashMap<>();
+    public HashMap<Row, Integer> clusters = new HashMap<>();
 
     public KMeans() {
         k = 1;

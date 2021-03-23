@@ -15,10 +15,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.chart.*;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -28,6 +25,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 
+import javax.xml.crypto.Data;
 import java.io.*;
 import java.net.URL;
 import java.text.DecimalFormat;
@@ -35,6 +33,7 @@ import java.text.NumberFormat;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 public class Controller implements Initializable,Init {
@@ -43,7 +42,8 @@ public class Controller implements Initializable,Init {
     ImageView boxPlotIV;
 
     @FXML
-    JFXButton displayBtn,clusteringBtn,aprioriBtn,uploadBtn,overviewBtn,infoBtn,runBtn,rulesTAB,freqsTAB,runAprioriBtn;
+    JFXButton displayBtn,clusteringBtn,aprioriBtn,uploadBtn,overviewBtn,infoBtn,runBtn,rulesTAB,freqsTAB,runAprioriBtn,
+            aprioriStatsTAB,clusterInfoTAB,instancesTAB;
 
     @FXML
     AnchorPane valuesAP,histoAP,scatterAP,boxPlotAP,overviewAP,clusterAP,aprioriAP;
@@ -52,7 +52,7 @@ public class Controller implements Initializable,Init {
     LineChart<String,Integer> valuesLC;
 
     @FXML
-    BarChart valuesBC;
+    BarChart valuesBC,statsChart;
 
     @FXML
     ScatterChart valuesSC;
@@ -70,10 +70,11 @@ public class Controller implements Initializable,Init {
     JFXScrollPane scrollPane;
 
     @FXML
-    JFXTextField ncKmeans,maxItersKmeans,ncKmedoids,maxItersKmedoids,ncClarans,maxItersClarans,maxNeighbors,supportTF,binSizeTF,intervalTF;
+    JFXTextField ncKmeans,maxItersKmeans,ncKmedoids,maxItersKmedoids,ncClarans,maxItersClarans,maxNeighbors,supportTF,intervalTF;
 
     @FXML
-    Label meanLabel,medianLabel,modeLabel,histogramTAB,valuesTAB,scatterTAB,boxPlotTAB,kmeans,kmedoids,clarans,costLabel,fmeasureLabel,runtimeLabel;
+    Label meanLabel,medianLabel,modeLabel,histogramTAB,valuesTAB,scatterTAB,boxPlotTAB,kmeans,kmedoids,clarans,costLabel,
+            fmeasureLabel,runtimeLabel,freqItemSizeLabel,ruleSizeLabel,runtimeAprioriLabel;
 
     @FXML
     ChoiceBox<String> attributeCB,yAttrCB,distanceKmeans,distanceKmedoids,distanceClarans;
@@ -91,6 +92,9 @@ public class Controller implements Initializable,Init {
     TableView<AssociationRule> rulesTV;
 
     @FXML
+    TableView<ClusterInstance> clusterTable;
+
+    @FXML
     TableColumn<FrequentItem, String> nameTC;
 
     @FXML
@@ -106,22 +110,36 @@ public class Controller implements Initializable,Init {
     TableColumn<AssociationRule, Double> confidenceTC;
 
     @FXML
+    TableColumn<ClusterInstance, String> instanceCol;
+
+    @FXML
+    TableColumn<ClusterInstance, Integer> classCol,clusterCol;
+
+    @FXML
     JFXSlider confidenceSlider;
+
+    @FXML
+    ScrollPane clustersInfoSP;
 
 
     DataSet dataSet;
     DataSet discretData;
     ObservableList<String> attributesList = FXCollections.observableArrayList();
+    ObservableList<ClusterInstance> instances;
     File selectedFile = null;
     String selectedAlgo = "kmeans";
     ObservableList<Row> originalRows = FXCollections.observableArrayList();
     NumberFormat formatter = new DecimalFormat("#0.00");
+    XYChart.Series<String, Number> runtimeSeries = new XYChart.Series<>();
+    XYChart.Series<String, Number> itemSeries = new XYChart.Series<>();
+    XYChart.Series<String, Number> ruleSeries = new XYChart.Series<>();
+    static int aprioriExec = 0;
+
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
         dataSet = getDataSet("/ds/Thyroid_Dataset.txt", true);
-        System.out.println(dataSet.size());
         discretData = getDataSet("/ds/Thyroid_Dataset.txt", true);
 
         valuesTAB.setId("selected-label");
@@ -222,6 +240,10 @@ public class Controller implements Initializable,Init {
             selectedAlgo = "clarans";
         });
 
+        clusterInfoTAB.setOnAction(this::selectClusterTab);
+
+        instancesTAB.setOnAction(this::selectClusterTab);
+
         runBtn.setOnAction(action -> {
             if(selectedAlgo.equals("kmeans")) {
                 try {
@@ -259,17 +281,46 @@ public class Controller implements Initializable,Init {
         initSlider(confidenceSlider);
         initTables();
         supportTF.setText("3");
-        binSizeTF.setText("4");
         intervalTF.setText("10");
+        runtimeSeries.setName("Runtime");
+        itemSeries.setName("Frequent itemset");
+        ruleSeries.setName("Association rules");
+        statsChart.getData().addAll(runtimeSeries, itemSeries, ruleSeries);
         
         freqsTAB.setOnAction(this::aprioriSelect);
         rulesTAB.setOnAction(this::aprioriSelect);
+        aprioriStatsTAB.setOnAction(this::aprioriSelect);
 
         runAprioriBtn.setOnAction(action -> {
-            runApriori();
+            try {
+                runApriori();
+            } catch (CloneNotSupportedException e) {
+                e.printStackTrace();
+            }
         });
 
         Common.controlDigitField(supportTF);
+
+    }
+
+    private void selectClusterTab(ActionEvent action) {
+
+        if(action.getSource() == clusterInfoTAB){
+
+            clusterInfoTAB.setId("apriori-btn-selected");
+            instancesTAB.setId("apriori-btn");
+
+            clustersInfoSP.setVisible(true);
+            clusterTable.setVisible(false);
+        }
+        if(action.getSource() == instancesTAB){
+
+            clusterInfoTAB.setId("apriori-btn");
+            instancesTAB.setId("apriori-btn-selected");
+
+            clustersInfoSP.setVisible(false);
+            clusterTable.setVisible(true);
+        }
 
     }
 
@@ -282,6 +333,10 @@ public class Controller implements Initializable,Init {
         conseqTC.setCellValueFactory(new PropertyValueFactory<>("right"));
         confidenceTC.setCellValueFactory(new PropertyValueFactory<>("confidence"));
         ruleSupportTC.setCellValueFactory(new PropertyValueFactory<>("support"));
+
+        instanceCol.setCellValueFactory(new PropertyValueFactory<>("instance"));
+        classCol.setCellValueFactory(new PropertyValueFactory<>("cls"));
+        clusterCol.setCellValueFactory(new PropertyValueFactory<>("cluster"));
     }
 
     private void initSlider(JFXSlider slider) {
@@ -291,22 +346,46 @@ public class Controller implements Initializable,Init {
         });
     }
 
-    private void runApriori() {
+    private void runApriori() throws CloneNotSupportedException {
+
+        DataSet ds = dataSet.clone();
 
         double confidence = confidenceSlider.getValue()/100;
         int minSup = Integer.parseInt(supportTF.getText());
         int interval = Integer.parseInt(intervalTF.getText());
+        Instant start,end;
+        long elapsedTime;
 
-        for(int i = 0; i < discretData.getNumFeatures(); i++){
-            discretData.discretize(i, interval);
+        for(int i = 0; i < ds.getNumFeatures(); i++){
+            ds.discretize(i, interval);
         }
 
-        Apriori apriori = new Apriori(discretData.getTransactions(), minSup, confidence);
+        Apriori apriori = new Apriori(ds.getTransactions(), minSup, confidence);
+        start = Instant.now();
         apriori.run();
+        end = Instant.now();
+        apriori.getAssociationRules();
+        elapsedTime = Duration.between(start, end).toMillis();
 
         freqItemsTable.setItems(apriori.frequentItems);
         rulesTV.setItems(apriori.associationRules);
+        freqItemSizeLabel.setText(apriori.frequentItems.size() + " itemset");
+        ruleSizeLabel.setText(apriori.associationRules.size() + " rule");
+        runtimeAprioriLabel.setText(elapsedTime + " ms");
+        aprioriExec++;
+
+        updateStats(elapsedTime, apriori.frequentItems.size(), apriori.associationRules.size());
+
     }
+
+    private void updateStats(long elapsedTime, int items, int rules) {
+
+        runtimeSeries.getData().add(new XYChart.Data("Execution " + aprioriExec , elapsedTime));
+        itemSeries.getData().add(new XYChart.Data("Execution " + aprioriExec, items));
+        ruleSeries.getData().add(new XYChart.Data("Execution " + aprioriExec, rules));
+
+    }
+
 
     private void aprioriSelect(ActionEvent action) {
 
@@ -314,17 +393,31 @@ public class Controller implements Initializable,Init {
 
             freqsTAB.setId("apriori-btn-selected");
             rulesTAB.setId("apriori-btn");
+            aprioriStatsTAB.setId("apriori-btn");
 
             freqItemsTable.setVisible(true);
             rulesTV.setVisible(false);
+            statsChart.setVisible(false);
         }
         if(action.getSource() == rulesTAB){
 
             freqsTAB.setId("apriori-btn");
             rulesTAB.setId("apriori-btn-selected");
+            aprioriStatsTAB.setId("apriori-btn");
 
             freqItemsTable.setVisible(false);
             rulesTV.setVisible(true);
+            statsChart.setVisible(false);
+        }
+        if(action.getSource() == aprioriStatsTAB){
+
+            freqsTAB.setId("apriori-btn");
+            aprioriStatsTAB.setId("apriori-btn-selected");
+            rulesTAB.setId("apriori-btn");
+
+            freqItemsTable.setVisible(false);
+            rulesTV.setVisible(false);
+            statsChart.setVisible(true);
         }
     }
 
@@ -361,12 +454,29 @@ public class Controller implements Initializable,Init {
         thyroidClarans.run(dataSet);
         end = Instant.now();
 
-        displayClusters(thyroidClarans.clusters, thyroidClarans.bestMedoids);
+        DataSet[] output = thyroidClarans.clusters;
+
+        displayClusters(output, thyroidClarans.bestMedoids);
 
         runtime = Duration.between(start, end).toMillis();
         runtimeLabel.setText(runtime + " ms");
         costLabel.setText(formatter.format(thyroidClarans.globalCost));
         fmeasureLabel.setText(formatter.format(getGlobaleFMeasure(dataSet.getRows(), thyroidClarans.clusters)));
+
+        fillClusterTable(output);
+    }
+
+    private void fillClusterTable(DataSet[] output) {
+        instances = FXCollections.observableArrayList();
+        int cpt = 0;
+        for(DataSet ds : output){
+            cpt++;
+            for(Row row : ds.getRows()){
+                instances.add(new ClusterInstance(row.toString(), (int)row.values[0], cpt));
+            }
+        }
+
+        clusterTable.setItems(instances);
     }
 
     private void displayClusters(DataSet[] output, ObservableList<Row> centroids) throws IOException {
@@ -413,6 +523,8 @@ public class Controller implements Initializable,Init {
         costLabel.setText(formatter.format(thyroidKMediods.getCurrentCost()));
         fmeasureLabel.setText(formatter.format(getGlobaleFMeasure(dataSet.getRows(), output)));
 
+        fillClusterTable(output);
+
     }
 
     private void runKMeans() throws IOException {
@@ -443,11 +555,19 @@ public class Controller implements Initializable,Init {
         runtime = Duration.between(start, end).toMillis();
         //thyroidKMeans.display();
 
-        displayClusters(thyroidKMeans.getClusters(), thyroidKMeans.getCentroids());
+        DataSet[] output = thyroidKMeans.getClusters();
+
+        displayClusters(output, thyroidKMeans.getCentroids());
 
         runtimeLabel.setText(runtime + " ms");
         costLabel.setText(formatter.format(thyroidKMeans.getCost()));
         fmeasureLabel.setText(formatter.format(getGlobaleFMeasure(dataSet.getRows(), thyroidKMeans.getClusters())));
+
+        instances = FXCollections.observableArrayList();
+        for(Map.Entry<Row, Integer> entry : thyroidKMeans.clusters.entrySet()){
+            instances.add(new ClusterInstance(entry.getKey().toString(), (int)entry.getKey().values[0], entry.getValue()+1));
+        }
+        clusterTable.setItems(instances);
 
     }
 

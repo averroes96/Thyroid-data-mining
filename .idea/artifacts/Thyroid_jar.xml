@@ -3,8 +3,11 @@
     <output-path>$PROJECT_DIR$/out/artifacts/Thyroid_jar</output-path>
     <root id="archive" name="Thyroid.jar">
       <element id="module-output" name="Thyroid" />
-      <element id="extracted-dir" path="$PROJECT_DIR$/lib/AnimateFX-1.2.1.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$USER_HOME$/Downloads/JARS/commons-collections4-4.4.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$USER_HOME$/Downloads/JARS/jswarm-pso_2_08.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$PROJECT_DIR$/lib/jfoenix-8.0.8.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/lib/AnimateFX-1.2.1.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$USER_HOME$/Downloads/JARS/fontawesomefx-8.9.jar" path-in-jar="/" />
     </root>
   </artifact>
 </component>

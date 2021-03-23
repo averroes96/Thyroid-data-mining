@@ -457,12 +457,13 @@ public class DataSet implements Init,Cloneable {
     @Override
     public DataSet clone() throws CloneNotSupportedException{
 
-        DataSet ds = (DataSet)super.clone();
-        ds.rows = FXCollections.observableArrayList();
+        DataSet clone = (DataSet) super.clone();
+        clone.rows = FXCollections.observableArrayList();
+        clone.numFeatures = this.numFeatures;
 
-        ds.rows.addAll(this.rows);
+        clone.rows.addAll(rows);
 
-        return ds;
+        return clone;
     }
 
     public int size(){
@@ -531,62 +532,4 @@ public class DataSet implements Init,Cloneable {
         return temp;
     }
 
-    public void getMinCost(){
-
-        ObservableList<Row> first = getRowsByClass(1);
-        ObservableList<Row> second = getRowsByClass(2);
-        ObservableList<Row> third = getRowsByClass(3);
-
-
-        Row firstMean = getMeanByClass(1, first);
-        Row secondMean = getMeanByClass(2, second);
-        Row thirdMean = getMeanByClass(3, third);
-
-        double firstCost = getCostByClass(first, firstMean);
-        double secondCost = getCostByClass(second, secondMean);
-        double thirdCost = getCostByClass(third, thirdMean);
-    }
-
-    private double getCostByClass(ObservableList<Row> temp, Row mean) {
-
-        double distance;
-        double cost = 0;
-        for(Row row : temp){
-            distance = Distance.calculateDistance(EUCLEDIAN, mean, row, 6);
-            cost += distance;
-        }
-
-        return cost;
-    }
-
-    private Row getMeanByClass(int classNumber, ObservableList<Row> temp) {
-
-        double globalSum;
-        double localSum;
-        Row row = new Row(numFeatures);
-        row.set(0, classNumber);
-        for(int i = 1; i < 6; i++) {
-            localSum = 0;
-            globalSum = 0;
-            for (Row tmp : temp) {
-                localSum += tmp.values[i];
-            }
-            globalSum += localSum / temp.size();
-            row.set(i, globalSum);
-        }
-
-        return row;
-    }
-
-    private ObservableList<Row> getRowsByClass(int classNumber) {
-
-        ObservableList<Row> temp = FXCollections.observableArrayList();
-
-        for(Row row : rows){
-            if(row.values[0] == classNumber)
-                temp.add(row);
-        }
-
-        return temp;
-    }
 }

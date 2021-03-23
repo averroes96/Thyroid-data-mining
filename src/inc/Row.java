@@ -25,8 +25,8 @@ public class Row{
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder();
-        for(double val : values)
-            s.append(val).append(", ");
+        for(int i = 1; i < values.length; i++)
+            s.append(values[i]).append(", ");
 
         return s.toString();
     }
@@ -74,7 +74,7 @@ public class Row{
 
         StringBuilder temp = new StringBuilder();
 
-        for (int i = 1; i < nbrFeatures; i++){
+        for (int i = 0; i < nbrFeatures; i++){
             temp.append("I").append(i + 1).append("_").append(values[i]).append(" ");
         }
 

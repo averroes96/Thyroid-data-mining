@@ -143,7 +143,7 @@
 }
 
 #menu-btn:hover{
-    -fx-background-color: #c9c9c9;
+    -fx-background-color: #003f5c32;
 }
 
 #menu-btn-selected{
@@ -159,7 +159,7 @@
 }
 
 #apriori-btn:hover{
-    -fx-background-color: #c9c9c9;
+    -fx-background-color: #ffa60032;
 }
 
 #apriori-btn-selected{
@@ -174,7 +174,7 @@
 .table-view .column-header,
 .table-view .column-header-background .filler {
     -fx-background-color:  #003f5c;
-    -fx-size:48;
+    -fx-size:48px;
     -fx-background-radius: 16 16 0 0;
 }
 
@@ -188,9 +188,8 @@
     -fx-alignment: CENTER;
 }
 .table-view .cell{
-    -fx-cell-size: 32;
+    -fx-cell-size: 40;
     -fx-background-color: white;
-    -fx-border-color: #ddd;
     -fx-text-fill: #003f5c;
     -fx-alignment: CENTER;
 
@@ -198,7 +197,6 @@
 .table-row-cell:selected {
     -fx-background-color: whitesmoke;
     -fx-text-background-color:  #ffa600;
-
 
 }
 

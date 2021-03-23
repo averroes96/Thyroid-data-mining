@@ -49,6 +49,7 @@ public class Apriori {
     public void run(){
 
         candidates = initCandidates();
+        System.out.println("Candidates size = " + candidates.size());
         initFrequentItems();
         currItemset = 1;
 
@@ -57,7 +58,7 @@ public class Apriori {
             nFreqItems();
         }
 
-        System.out.println("Candidates = " + candidates.size());
+        /*System.out.println("Candidates = " + candidates.size());
 
         System.out.println("====================================================");
 
@@ -71,21 +72,19 @@ public class Apriori {
         for(String item : freqItems.keySet())
             System.out.println(item + " => " + freqItems.get(item));
 
-        getAssociationRules();
-
         System.out.println("====================================================");
         System.out.println("Number of rules = " + associationRules.size());
         for(AssociationRule rule : associationRules){
             System.out.println(rule);
-        }
+        }*/
     }
 
     public void getAssociationRules(){
 
         associationRules = FXCollections.observableArrayList();
 
-        for(Map.Entry<String, Integer> entry1 : freqItems.entrySet()){
-            String arr[] = entry1.getKey().split(" ");
+        for(FrequentItem freItem : frequentItems){
+            String arr[] = freItem.getName().split(" ");
             int r = arr.length - 1;
             int n = arr.length;
             if (n > 1) {
@@ -93,27 +92,45 @@ public class Apriori {
                 ArrayList<String> subsets = new ArrayList<>();
                 combinationUtil(arr, data, 0, n - 1, 0, r, subsets);
                 for(String subset : subsets){
-                    checkConfidence(subset, entry1);
+                    checkConfidence(subset, freItem);
+                }
+            }
+        }
+
+        for(FrequentItem frequentItem : frequentItems){
+            System.out.println(frequentItem.getName() + " => " + frequentItem.getSupport());
+        }
+    }
+
+    private void checkConfidence(String subset, FrequentItem set) {
+
+        for(FrequentItem frequentItem : frequentItems){
+            if(strEqual(subset.split(" "), frequentItem.getName().split(" "))){
+                System.out.println(subset + " == " + frequentItem.getName());
+                double confidence = (float)set.getSupport() / frequentItem.getSupport();
+                if(confidence >= minConfidence) {
+                    String right = set.getName();
+                    int support = set.getSupport();
+                    if(!contains(subset, right)) {
+                        AssociationRule rule = new AssociationRule(subset, right, confidence, support);
+                        associationRules.add(rule);
+                    }
+                    break;
                 }
             }
         }
     }
 
-    private void checkConfidence(String subset, Map.Entry<String, Integer> set) {
+    private boolean contains(String left, String right){
 
-        for(Map.Entry<String, Integer> entry2 : freqItems.entrySet()){
-            if(strEqual(subset.split(" "), entry2.getKey().split(" "))){
-                double confidence = (float)set.getValue() / entry2.getValue();
-                if(confidence >= minConfidence) {
-                    String left = entry2.getKey();
-                    String right = set.getKey();
-                    int support = set.getValue();
-                    AssociationRule rule = new AssociationRule(left, right, confidence, support);
-                    associationRules.add(rule);
-                    break;
-                }
+        for(AssociationRule rule : associationRules){
+            if(rule.getLeft().equals(left) && strEqual(right.split(" "), rule.getRight().split(" "))){
+                return true;
             }
         }
+
+        return false;
+
     }
 
     private void nFreqItems() {
@@ -124,7 +141,7 @@ public class Apriori {
             prevFreqItems.put(entry.getKey(), entry.getValue());
         }
 
-        addFreqs();
+        addAllFreqs();
 
     }
 
@@ -290,6 +307,10 @@ public class Apriori {
 
     private void addFreqs() {
 
+        addAllFreqs();
+    }
+
+    private void addAllFreqs() {
         currFreqItems = new HashMap<>();
 
         for(Map.Entry<String, Integer> entry : candidates.entrySet()){
